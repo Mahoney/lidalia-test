@@ -4,12 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
 
 public class Assert {
 
-	@SuppressWarnings("unchecked")
 	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+		return shouldThrow(expectedThrowableType, workThatShouldThrowThrowable, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable, String message) throws Throwable {
 		try {
 			workThatShouldThrowThrowable.call();
 		} catch (Throwable actualThrowableThrown) {
@@ -19,26 +24,32 @@ public class Assert {
 				throw actualThrowableThrown;
 			}
 		}
-		throw new AssertionError("No exception thrown");
+		String realMessage = message == null ? "No exception thrown" : message;
+		throw new AssertionError(realMessage);
 	}
 
 	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable);
-		assertSame(expectedThrowable, actualThrowable);
+		shouldThrow(expectedThrowable, workThatShouldThrowThrowable, null);
+	}
+
+	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, Callable<Void> workThatShouldThrowThrowable, String message) throws Throwable {
+		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable, message);
+		assertSame(message, expectedThrowable, actualThrowable);
 	}
 
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
 		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 
-		UnsupportedOperationException oue = shouldThrow(UnsupportedOperationException.class, new Callable<Void>() {
+		InvocationTargetException invocationTargetException = shouldThrow(InvocationTargetException.class, new Callable<Void>() {
 			public Void call() throws Exception {
-				Constructor<?> constructor = classThatShouldNotBeInstantiable.getConstructor();
+				Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				constructor.newInstance();
 				return null;
 			}
 		});
-		assertEquals("Not instantiable", oue.getMessage());
+		UnsupportedOperationException cause = (UnsupportedOperationException) invocationTargetException.getCause();
+		assertEquals("Not instantiable", cause.getMessage());
 	}
 
 	private static void assertOnlyHasNoArgsConstructor(final Class<?> classThatShouldNotBeInstantiable) {
