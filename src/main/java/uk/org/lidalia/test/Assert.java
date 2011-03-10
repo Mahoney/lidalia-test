@@ -10,11 +10,11 @@ import java.util.concurrent.Callable;
 public class Assert {
 
 	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-		return shouldThrow(expectedThrowableType, workThatShouldThrowThrowable, null);
+		return shouldThrow(expectedThrowableType, null, workThatShouldThrowThrowable);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, Callable<Void> workThatShouldThrowThrowable, String message) throws Throwable {
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(Class<ThrowableType> expectedThrowableType, String message, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
 		try {
 			workThatShouldThrowThrowable.call();
 		} catch (Throwable actualThrowableThrown) {
@@ -29,11 +29,11 @@ public class Assert {
 	}
 
 	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-		shouldThrow(expectedThrowable, workThatShouldThrowThrowable, null);
+		shouldThrow(expectedThrowable, null, workThatShouldThrowThrowable);
 	}
 
-	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, Callable<Void> workThatShouldThrowThrowable, String message) throws Throwable {
-		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), workThatShouldThrowThrowable, message);
+	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, String message, Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+		ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), message, workThatShouldThrowThrowable);
 		assertSame(message, expectedThrowable, actualThrowable);
 	}
 
