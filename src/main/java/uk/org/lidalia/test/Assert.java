@@ -37,6 +37,7 @@ public class Assert {
 		assertSame(message, expectedThrowable, actualThrowable);
 	}
 
+	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
 		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 
