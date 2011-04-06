@@ -18,7 +18,7 @@
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
 			<version>1.7.9</version>
-			<scope>optional</scope>
+			<optional>true</optional>
 		</dependency>
   </dependencies>
 	<build>
