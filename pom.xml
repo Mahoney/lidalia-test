@@ -14,6 +14,12 @@
       <version>4.8.2</version>
       <scope>compile</scope>
     </dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+			<version>1.7.9</version>
+			<scope>optional</scope>
+		</dependency>
   </dependencies>
 	<build>
 		<plugins>

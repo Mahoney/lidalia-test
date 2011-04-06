@@ -1,5 +1,7 @@
 package uk.org.lidalia.test;
 
+import groovy.lang.Closure;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
@@ -59,6 +61,22 @@ public class Assert {
 	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Runnable workThatShouldThrowThrowable) throws Throwable {
 		final ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), message, workThatShouldThrowThrowable);
 		assertSame(message, expectedThrowable, actualThrowable);
+	}
+
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Closure workThatShouldThrowThrowable) throws Throwable {
+		return shouldThrow(expectedThrowableType, (Runnable) workThatShouldThrowThrowable);
+	}
+
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final String message, final Closure workThatShouldThrowThrowable) throws Throwable {
+		return shouldThrow(expectedThrowableType, message, (Runnable) workThatShouldThrowThrowable);
+	}
+
+	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Closure workThatShouldThrowThrowable) throws Throwable {
+		shouldThrow(expectedThrowable, (Runnable) workThatShouldThrowThrowable);
+	}
+
+	public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Closure workThatShouldThrowThrowable) throws Throwable {
+		shouldThrow(expectedThrowable, message, (Runnable) workThatShouldThrowThrowable);
 	}
 
 	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
