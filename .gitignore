@@ -1,7 +1,9 @@
-.classpath
 target
+.DS_Store
 .project
+.classpath
 .settings
+.externalToolBuilders
 *.iml
 *.iws
 *.ipr
