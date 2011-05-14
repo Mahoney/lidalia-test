@@ -2,7 +2,6 @@ package uk.org.lidalia.test;
 
 import java.util.concurrent.Callable;
 
-import groovy.lang.Closure;
 import org.junit.Test;
 import static uk.org.lidalia.test.Assert.shouldThrow;
 import static org.junit.Assert.assertSame;
@@ -203,107 +202,6 @@ public class AssertTests {
 	@Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() throws Throwable {
 		try {
 			shouldThrow(new OutOfMemoryError(), new Runnable() {
-				@Override
-				public void run() {
-				}
-			});
-			fail("An assertion failed error should have been thrown as the no throwable occured");
-		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
-		}
-	}
-
-	//NEW
-	@Test public void shouldThrowReturnsExpectedExceptionForClosure() throws Throwable {
-		final NullPointerException expected = new NullPointerException();
-		NullPointerException actual = shouldThrow(NullPointerException.class, new Closure(null) {
-			@Override
-			public void run() {
-				throw expected;
-			}
-		});
-		assertSame(expected, actual);
-	}
-
-	@Test public void shouldThrowReturnsExpectedErrorForClosure() throws Throwable {
-		final OutOfMemoryError expected = new OutOfMemoryError();
-		OutOfMemoryError actual = shouldThrow(OutOfMemoryError.class, new Closure(null) {
-			@Override
-			public void run() {
-				throw expected;
-			}
-		});
-		assertSame(expected, actual);
-	}
-
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-	@Test public void shouldThrowThrowsUnexpectedExceptionForClosure() throws Throwable {
-		final NullPointerException toBeThrown = new NullPointerException();
-		try {
-			shouldThrow(OutOfMemoryError.class, new Closure(null) {
-				@Override
-				public void run() {
-					throw toBeThrown;
-				}
-			});
-			fail("NullPointerException should have been thrown");
-		} catch (NullPointerException npe) {
-			assertSame(toBeThrown, npe);
-		}
-	}
-
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-	@Test public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrownForClosure() throws Throwable {
-		try {
-			shouldThrow(OutOfMemoryError.class, new Closure(null) {
-				@Override
-				public void run() {
-				}
-			});
-			fail("An assertion failed error should have been thrown as the no throwable occured");
-		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
-		}
-	}
-
-	@Test public void shouldThrowInstancePassesWithExpectedExceptionForClosure() throws Throwable {
-		final NullPointerException expected = new NullPointerException();
-		shouldThrow(expected, new Closure(null) {
-			@Override
-			public void run() {
-				throw expected;
-			}
-		});
-	}
-
-	@Test public void shouldThrowInstancePassesWithExpectedErrorForClosure() throws Throwable {
-		final OutOfMemoryError expected = new OutOfMemoryError();
-		shouldThrow(expected, new Closure(null) {
-			@Override
-			public void run() {
-				throw expected;
-			}
-		});
-	}
-
-	@Test public void shouldThrowInstanceThrowsUnexpectedExceptionForClosure() throws Throwable {
-		final NullPointerException toBeThrown = new NullPointerException();
-		try {
-			shouldThrow(new OutOfMemoryError(), new Closure(null) {
-				@Override
-				public void run() {
-					throw toBeThrown;
-				}
-			});
-			fail("The unexpected null pointer exception should have been thrown");
-		} catch (NullPointerException npe) {
-			assertSame(toBeThrown, npe);
-		}
-	}
-
-	@Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrownForClosure() throws Throwable {
-		try {
-			shouldThrow(new OutOfMemoryError(), new Closure(null) {
 				@Override
 				public void run() {
 				}
