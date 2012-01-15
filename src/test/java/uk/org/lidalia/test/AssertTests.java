@@ -31,7 +31,6 @@ public class AssertTests {
 		assertSame(expected, actual);
 	}
 
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	@Test public void shouldThrowThrowsUnexpectedException() throws Throwable {
 		final NullPointerException toBeThrown = new NullPointerException();
 		try {
@@ -47,7 +46,6 @@ public class AssertTests {
 		}
 	}
 
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	@Test public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
 		try {
 			shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
@@ -134,7 +132,6 @@ public class AssertTests {
 		assertSame(expected, actual);
 	}
 
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	@Test public void shouldThrowThrowsUnexpectedExceptionForRunnable() throws Throwable {
 		final NullPointerException toBeThrown = new NullPointerException();
 		try {
@@ -150,7 +147,6 @@ public class AssertTests {
 		}
 	}
 
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	@Test public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() throws Throwable {
 		try {
 			shouldThrow(OutOfMemoryError.class, new Runnable() {

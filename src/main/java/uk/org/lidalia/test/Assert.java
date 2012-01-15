@@ -9,6 +9,8 @@ import java.util.concurrent.Callable;
 
 public class Assert {
 
+	private static final String INVOKER_INVOCATION_EXCEPTION_CLASSNAME = "org.codehaus.groovy.runtime.InvokerInvocationException";
+
 	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
 		return shouldThrow(expectedThrowableType, null, workThatShouldThrowThrowable);
 	}
@@ -18,11 +20,13 @@ public class Assert {
 		try {
 			workThatShouldThrowThrowable.call();
 		} catch (Throwable actualThrowableThrown) {
+			if (actualThrowableThrown.getClass().getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME) && !expectedThrowableType.getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)) {
+				actualThrowableThrown = actualThrowableThrown.getCause();
+			}
 			if (instanceOf(actualThrowableThrown, expectedThrowableType)) {
 				return (ThrowableType) actualThrowableThrown;
-			} else {
-				throw actualThrowableThrown;
 			}
+			throw actualThrowableThrown;
 		}
 		final String realMessage = message == null ? "No exception thrown" : message;
 		throw new AssertionError(realMessage);
@@ -61,7 +65,6 @@ public class Assert {
 		assertSame(message, expectedThrowable, actualThrowable);
 	}
 
-	@SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
 	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
 		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 
