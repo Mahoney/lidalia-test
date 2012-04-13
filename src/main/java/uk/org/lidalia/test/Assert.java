@@ -1,7 +1,9 @@
 package uk.org.lidalia.test;
 
+import static java.lang.reflect.Modifier.isFinal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,6 +12,10 @@ import java.util.concurrent.Callable;
 public class Assert {
 
 	private static final String INVOKER_INVOCATION_EXCEPTION_CLASSNAME = "org.codehaus.groovy.runtime.InvokerInvocationException";
+
+    public static void assertFinal(Class<?> theClass, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+        assertTrue(isFinal(theClass.getMethod(methodName, parameterTypes).getModifiers()));
+    }
 
 	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
 		return shouldThrow(expectedThrowableType, null, workThatShouldThrowThrowable);
