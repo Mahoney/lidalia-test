@@ -3,7 +3,10 @@ package uk.org.lidalia.test;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static uk.org.lidalia.test.Assert.assertFinal;
+import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 import static uk.org.lidalia.test.Assert.shouldThrow;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
@@ -18,14 +21,19 @@ public class AssertTests {
         public final void finalMethod(String arg1, Integer arg2) {}
     }
 
-    @Test
-    public void assertFinalWithFinalMethod() throws Exception {
+    @Test public void assertFinalWithFinalMethod() throws Exception {
         assertFinal(DummyClass.class, "finalMethod");
     }
 
-    @Test(expected = AssertionError.class)
-    public void assertFinalWithNonFinalMethod() throws Exception {
-        assertFinal(DummyClass.class, "nonFinalMethod");
+    @Test public void assertFinalWithNonFinalMethod() throws Throwable {
+        AssertionError error = shouldThrow(AssertionError.class, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                assertFinal(DummyClass.class, "nonFinalMethod");
+                return null;
+            }
+        });
+        assertEquals("nonFinalMethod is not final", error.getMessage());
     }
 
     @Test(expected = NoSuchMethodException.class)
@@ -33,8 +41,7 @@ public class AssertTests {
         assertFinal(DummyClass.class, "protectedFinalMethod");
     }
 
-    @Test
-    public void assertFinalWithMatchingArgs() throws Exception {
+    @Test public void assertFinalWithMatchingArgs() throws Exception {
         assertFinal(DummyClass.class, "finalMethod", String.class, Integer.class);
     }
 
@@ -80,17 +87,31 @@ public class AssertTests {
 		}
 	}
 
-	@Test public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+    @Test public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+        try {
+            shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    return null;
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occurred");
+        } catch (AssertionError error) {
+            assertEquals("No exception thrown", error.getMessage());
+        }
+    }
+
+	@Test public void shouldThrowThrowsAssertionFailedErrorWithMessage() throws Throwable {
 		try {
-			shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
+			shouldThrow(OutOfMemoryError.class, "Where's out of memory?", new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
 					return null;
 				}
 			});
-			fail("An assertion failed error should have been thrown as the no throwable occured");
+			fail("An assertion failed error should have been thrown as the no throwable occurred");
 		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
+            assertEquals("Where's out of memory?", error.getMessage());
 		}
 	}
 
@@ -129,19 +150,61 @@ public class AssertTests {
 		}
 	}
 
-	@Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+	@Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrown() throws Throwable {
 		try {
 			shouldThrow(new OutOfMemoryError(), new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					return null;
+					throw new OutOfMemoryError();
 				}
 			});
 			fail("An assertion failed error should have been thrown as the no throwable occured");
 		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
+			assertEquals("Did not throw correct Throwable; expected same:<java.lang.OutOfMemoryError> was not:<java.lang.OutOfMemoryError>", error.getMessage());
 		}
 	}
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    return null;
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("No exception thrown", error.getMessage());
+        }
+    }
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrown() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), "Where's my error?", new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    throw new OutOfMemoryError();
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Where's my error? expected same:<java.lang.OutOfMemoryError> was not:<java.lang.OutOfMemoryError>", error.getMessage());
+        }
+    }
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrown() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), "Where's my error?", new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    return null;
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Where's my error?", error.getMessage());
+        }
+    }
 
 	//NEW
 	@Test public void shouldThrowReturnsExpectedExceptionForRunnable() throws Throwable {
@@ -190,9 +253,21 @@ public class AssertTests {
 			});
 			fail("An assertion failed error should have been thrown as the no throwable occured");
 		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
+            assertEquals("No exception thrown", error.getMessage());
 		}
 	}
+
+    @Test public void shouldThrowThrowsAssertionFailedErrorWithMessageForRunnable() throws Throwable {
+        try {
+            shouldThrow(OutOfMemoryError.class, "Where's out of memory?", new Runnable() {
+                @Override
+                public void run() {}
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Where's out of memory?", error.getMessage());
+        }
+    }
 
 	@Test public void shouldThrowInstancePassesWithExpectedExceptionForRunnable() throws Throwable {
 		final NullPointerException expected = new NullPointerException();
@@ -238,7 +313,78 @@ public class AssertTests {
 			});
 			fail("An assertion failed error should have been thrown as the no throwable occured");
 		} catch (AssertionError error) {
-			assert "No exception thrown".equals(error.getMessage());
+            assertEquals("No exception thrown", error.getMessage());
 		}
 	}
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrownForRunnable() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), "Where's my error?", new Runnable() {
+                @Override
+                public void run(){}
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Where's my error?", error.getMessage());
+        }
+    }
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrownForRunnable() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), new Runnable() {
+                @Override
+                public void run() {
+                    throw new OutOfMemoryError();
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Did not throw correct Throwable; expected same:<java.lang.OutOfMemoryError> was not:<java.lang.OutOfMemoryError>", error.getMessage());
+        }
+    }
+
+    @Test public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrownForRunnable() throws Throwable {
+        try {
+            shouldThrow(new OutOfMemoryError(), "Where's my error?", new Runnable() {
+                @Override
+                public void run(){
+                    throw new OutOfMemoryError();
+                }
+            });
+            fail("An assertion failed error should have been thrown as the no throwable occured");
+        } catch (AssertionError error) {
+            assertEquals("Where's my error? expected same:<java.lang.OutOfMemoryError> was not:<java.lang.OutOfMemoryError>", error.getMessage());
+        }
+    }
+
+    @Test public void assertNotInstantiableWithUninstantiableClass() throws Throwable {
+        assertNotInstantiable(Uninstantiable.class);
+    }
+
+    @Test public void assertNotInstantiableWithInstantiableClass() throws Throwable {
+        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    assertNotInstantiable(Instantiable.class);
+                    return null;
+                } catch (Throwable throwable) {
+                    throw (AssertionError) throwable;
+                }
+            }
+        });
+        assertEquals("Able to instantiate class uk.org.lidalia.test.AssertTests$Instantiable", expected.getMessage());
+    }
+
+    private static class Uninstantiable {
+        private Uninstantiable() {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
+    }
+
+    private static class Instantiable {
+        private Instantiable() {
+
+        }
+    }
 }
