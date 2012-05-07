@@ -1,9 +1,11 @@
-/target
-/.settings
-/.classpath
-/.project
+target
+.DS_Store
+.project
+.classpath
+.settings
+.externalToolBuilders
 *.iml
-*.ipr
 *.iws
+*.ipr
 *.ids
 .idea
