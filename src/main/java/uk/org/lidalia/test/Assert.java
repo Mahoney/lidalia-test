@@ -1,6 +1,5 @@
 package uk.org.lidalia.test;
 
-import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 import static java.lang.reflect.Modifier.isFinal;
 import static org.junit.Assert.assertEquals;
