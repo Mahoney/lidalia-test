@@ -4,12 +4,13 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.Assert.shouldThrow;
 import static uk.org.lidalia.test.UninstantiableMatchers.isNotInstantiable;
 
-public class MatchersTests {
+public class UninstantiableMatcherTests {
 
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -26,9 +27,10 @@ public class MatchersTests {
                 assertThat(TwoConstructors.class, isNotInstantiable());
             }
         });
-        assertEquals(LINE_SEPARATOR + "Expected: (class with 1 private no args constructor and class extending java.lang.Object and class that throws UnsupportedOperationException when no args constructor is invoked)" + LINE_SEPARATOR +
-                "     got: <" + TwoConstructors.class + ">" + LINE_SEPARATOR,
-                assertionError.getMessage());
+        String expectedErrorMessage = TwoConstructors.class + " has the wrong number of constructors" + LINE_SEPARATOR +
+                "Expected: is <1>" + LINE_SEPARATOR +
+                "     got: <2>" + LINE_SEPARATOR;
+        assertThat(assertionError.getMessage(), is(expectedErrorMessage));
     }
 
     @Test
@@ -39,9 +41,11 @@ public class MatchersTests {
                 assertThat(ExtendsOtherThanObject.class, isNotInstantiable());
             }
         });
-        assertEquals(LINE_SEPARATOR + "Expected: (class with 1 private no args constructor and class extending java.lang.Object and class that throws UnsupportedOperationException when no args constructor is invoked)" + LINE_SEPARATOR +
-                "     got: <" + ExtendsOtherThanObject.class + ">" + LINE_SEPARATOR,
-                assertionError.getMessage());
+
+        String expectedErrorMessage = ExtendsOtherThanObject.class + " has an unexpected superclass" + LINE_SEPARATOR +
+                "Expected: same(<" + Object.class + ">)" + LINE_SEPARATOR +
+                "     got: <" + HashMap.class + ">" + LINE_SEPARATOR;
+        assertThat(assertionError.getMessage(), is(expectedErrorMessage));
     }
 
     @Test
@@ -52,9 +56,10 @@ public class MatchersTests {
                 assertThat(ConstructorWithArg.class, isNotInstantiable());
             }
         });
-        assertEquals(LINE_SEPARATOR + "Expected: (class with 1 private no args constructor and class extending java.lang.Object and class that throws UnsupportedOperationException when no args constructor is invoked)" + LINE_SEPARATOR +
-                "     got: <" + ConstructorWithArg.class + ">" + LINE_SEPARATOR,
-                assertionError.getMessage());
+        String expectedErrorMessage = ConstructorWithArg.class + " has the wrong number of parameters on constructor" + LINE_SEPARATOR +
+                "Expected: is <0>" + LINE_SEPARATOR +
+                "     got: <1>" + LINE_SEPARATOR;
+        assertThat(assertionError.getMessage(), is(expectedErrorMessage));
     }
 
     @Test
@@ -65,9 +70,7 @@ public class MatchersTests {
                 assertThat(PublicConstructor.class, isNotInstantiable());
             }
         });
-        assertEquals(LINE_SEPARATOR + "Expected: (class with 1 private no args constructor and class extending java.lang.Object and class that throws UnsupportedOperationException when no args constructor is invoked)" + LINE_SEPARATOR +
-                "     got: <" + PublicConstructor.class + ">" + LINE_SEPARATOR,
-                assertionError.getMessage());
+        assertThat(assertionError.getMessage(), is(PublicConstructor.class + "'s constructor should be private"));
     }
 
     @Test
@@ -78,9 +81,35 @@ public class MatchersTests {
                 assertThat(ReflectivelyCallableConstructor.class, isNotInstantiable());
             }
         });
-        assertEquals(LINE_SEPARATOR + "Expected: (class with 1 private no args constructor and class extending java.lang.Object and class that throws UnsupportedOperationException when no args constructor is invoked)" + LINE_SEPARATOR +
-                "     got: <" + ReflectivelyCallableConstructor.class + ">" + LINE_SEPARATOR,
-                assertionError.getMessage());
+        assertThat(assertionError.getMessage(), is("Able to instantiate " + ReflectivelyCallableConstructor.class + " via reflection"));
+    }
+
+    @Test
+    public void isNotInstantiableWithClassWithConstructorWithWrongException() throws Throwable {
+        AssertionError assertionError = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(ConstructorThrowsWrongException.class, isNotInstantiable());
+            }
+        });
+        String expectedErrorMessage = ConstructorThrowsWrongException.class + "'s constructor threw the wrong exception" + LINE_SEPARATOR +
+                "Expected: is an instance of " + UnsupportedOperationException.class.getName() + LINE_SEPARATOR +
+                "     got: <" + RuntimeException.class.getName() + ": " + ConstructorThrowsWrongException.class.getSimpleName() + " is not instantiable>" + LINE_SEPARATOR;;
+        assertThat(assertionError.getMessage(), is(expectedErrorMessage));
+    }
+
+    @Test
+    public void isNotInstantiableWithClassWithConstructorWithWrongExceptionMessage() throws Throwable {
+        AssertionError assertionError = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(ConstructorThrowsExceptionWithWrongMessage.class, isNotInstantiable());
+            }
+        });
+        String expectedErrorMessage = ConstructorThrowsExceptionWithWrongMessage.class + "'s constructor should throw an exception with a specific message" + LINE_SEPARATOR +
+                "Expected: is \"" + ConstructorThrowsExceptionWithWrongMessage.class.getSimpleName() + " is not instantiable\"" + LINE_SEPARATOR +
+                "     got: \"Incorrect message\"" + LINE_SEPARATOR;
+        assertThat(assertionError.getMessage(), is(expectedErrorMessage));
     }
 
     private static class Uninstantiable {
@@ -119,6 +148,18 @@ public class MatchersTests {
 
     private static class ReflectivelyCallableConstructor {
         private ReflectivelyCallableConstructor() {
+        }
+    }
+
+    private static class ConstructorThrowsWrongException {
+        private ConstructorThrowsWrongException() {
+            throw new RuntimeException(getClass().getSimpleName() + " is not instantiable");
+        }
+    }
+
+    private static class ConstructorThrowsExceptionWithWrongMessage {
+        private ConstructorThrowsExceptionWithWrongMessage() {
+            throw new UnsupportedOperationException("Incorrect message");
         }
     }
 }

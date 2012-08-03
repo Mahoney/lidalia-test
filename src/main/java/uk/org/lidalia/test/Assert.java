@@ -12,6 +12,9 @@ import java.lang.reflect.Modifier;
 import java.util.concurrent.Callable;
 
 import com.google.common.base.Optional;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 public class Assert {
 
@@ -21,48 +24,59 @@ public class Assert {
         assertTrue(methodName + " is not final", isFinal(theClass.getMethod(methodName, parameterTypes).getModifiers()));
     }
 
-    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Runnable workThatShouldThrowThrowable) throws Throwable {
+    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Runnable workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, Optional.<String>absent(), workThatShouldThrowThrowable);
     }
 
-    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final String message, final Runnable workThatShouldThrowThrowable) throws Throwable {
+    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final String message, final Runnable workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, of(message), workThatShouldThrowThrowable);
     }
 
-	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+	public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Callable<Void> workThatShouldThrowThrowable) {
 		return shouldThrow(expectedThrowableType, Optional.<String>absent(), workThatShouldThrowThrowable);
 	}
 
-    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final String message, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+    public static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final String message, final Callable<Void> workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, of(message), workThatShouldThrowThrowable);
     }
 
-    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Runnable workThatShouldThrowThrowable) throws Throwable {
-        shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
+//    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Runnable workThatShouldThrowThrowable) {
+//        shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
+//    }
+//
+//    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Runnable workThatShouldThrowThrowable) {
+//        shouldThrow(expectedThrowable, of(message), workThatShouldThrowThrowable);
+//    }
+//
+//    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Callable<Void> workThatShouldThrowThrowable) {
+//        shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
+//    }
+//
+//    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Callable<Void> workThatShouldThrowThrowable) {
+//        shouldThrow(expectedThrowable, of(message), workThatShouldThrowThrowable);
+//    }
+//
+//    private static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Optional<String> message, final Runnable workThatShouldThrowThrowable) {
+//        shouldThrow(expectedThrowable, message, toCallable(workThatShouldThrowThrowable));
+//    }
+//
+//    private static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Optional<String> message, final Callable<Void> workThatShouldThrowThrowable) {
+//        final ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), message, workThatShouldThrowThrowable);
+//        assertSame(message.or("Did not throw correct Throwable;"), expectedThrowable, actualThrowable);
+//    }
+
+    public static <T> void assertThat(String reason, T actual, Matcher<T> matcher) {
+        String lineSeparator = System.getProperty("line.separator");
+        if (!matcher.matches(actual)) {
+            Description description= new StringDescription();
+            description.appendText(reason).appendText(lineSeparator);
+            description.appendText("Expected: ").appendDescriptionOf(matcher).appendText(lineSeparator);
+            description.appendText("     got: ").appendValue(actual).appendText(lineSeparator);
+            throw new java.lang.AssertionError(description.toString());
+        }
     }
 
-    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Runnable workThatShouldThrowThrowable) throws Throwable {
-        shouldThrow(expectedThrowable, of(message), workThatShouldThrowThrowable);
-    }
-
-    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-        shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
-    }
-
-    public static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final String message, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-        shouldThrow(expectedThrowable, of(message), workThatShouldThrowThrowable);
-    }
-
-    private static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Optional<String> message, final Runnable workThatShouldThrowThrowable) throws Throwable {
-        shouldThrow(expectedThrowable, message, toCallable(workThatShouldThrowThrowable));
-    }
-
-    private static <ThrowableType extends Throwable> void shouldThrow(final ThrowableType expectedThrowable, final Optional<String> message, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
-        final ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), message, workThatShouldThrowThrowable);
-        assertSame(message.or("Did not throw correct Throwable;"), expectedThrowable, actualThrowable);
-    }
-
-    private static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Optional<String> message, final Runnable workThatShouldThrowThrowable) throws Throwable {
+    private static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Optional<String> message, final Runnable workThatShouldThrowThrowable) {
         final Callable<Void> workAsCallable = toCallable(workThatShouldThrowThrowable);
         return shouldThrow(expectedThrowableType, message, workAsCallable);
     }
@@ -78,7 +92,7 @@ public class Assert {
     }
 
     @SuppressWarnings("unchecked")
-    private static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Optional<String> message, final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+    private static <ThrowableType extends Throwable> ThrowableType shouldThrow(final Class<ThrowableType> expectedThrowableType, final Optional<String> message, final Callable<Void> workThatShouldThrowThrowable) {
         try {
             workThatShouldThrowThrowable.call();
         } catch (final Throwable actualThrowableThrown) {
@@ -86,9 +100,14 @@ public class Assert {
             if (instanceOf(trueThrowable, expectedThrowableType)) {
                 return (ThrowableType) trueThrowable;
             }
-            throw actualThrowableThrown;
+            Assert.<RuntimeException>throwUnchecked(actualThrowableThrown);
         }
         throw new AssertionError(message.or("No exception thrown"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void throwUnchecked(Throwable toThrow) throws T {
+        throw (T) toThrow;
     }
 
     private static <ThrowableType extends Throwable> Throwable extractTrueThrowable(Class<ThrowableType> expectedThrowableType, Throwable actualThrowableThrown) {
@@ -101,7 +120,7 @@ public class Assert {
         return trueThrowable;
     }
 
-	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
+	public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) {
 		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 
 		final InvocationTargetException invocationTargetException = shouldThrow(InvocationTargetException.class, "Able to instantiate " + classThatShouldNotBeInstantiable, new Callable<Void>() {
