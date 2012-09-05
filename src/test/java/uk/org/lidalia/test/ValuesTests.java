@@ -74,6 +74,18 @@ public class ValuesTests {
     }
 
     @Test
+    public void uniqueValueForBooleanObject() throws Exception {
+        boolean initialValue = uniqueValueFor(Boolean.class);
+        for (int i = 0; i < 100; i++) {
+            boolean otherValue = uniqueValueFor(Boolean.class);
+            if (otherValue != initialValue) {
+                return;
+            }
+        }
+        fail("Always returns the same value!");
+    }
+
+    @Test
     public void uniqueValueForByteObject() throws Exception {
         Byte val1 = uniqueValueFor(Byte.class);
         Byte val2 = uniqueValueFor(Byte.class);

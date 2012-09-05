@@ -5,8 +5,18 @@
     <artifactId>parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>lidalia-test</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+
+  <name>Lidalia Test</name>
+  <description>A collection of useful common assertions &amp; matchers for unit testing.</description>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>http://github.com/Mahoney/lidalia-test/issues</url>
+  </issueManagement>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
