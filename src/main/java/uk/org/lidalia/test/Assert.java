@@ -17,9 +17,9 @@ public final class Assert {
     }
 
     public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
-		assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
+        assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 
-		final InvocationTargetException invocationTargetException = ShouldThrow.shouldThrow(
+        final InvocationTargetException invocationTargetException = ShouldThrow.shouldThrow(
                 InvocationTargetException.class,
                 "Able to instantiate " + classThatShouldNotBeInstantiable,
                 new Callable<Void>() {
@@ -35,18 +35,18 @@ public final class Assert {
                         }
                     }
                 });
-		final Throwable cause = invocationTargetException.getCause();
+        final Throwable cause = invocationTargetException.getCause();
         assertEquals(UnsupportedOperationException.class, cause.getClass());
-		assertEquals("Not instantiable", cause.getMessage());
-	}
+        assertEquals("Not instantiable", cause.getMessage());
+    }
 
-	private static void assertOnlyHasNoArgsConstructor(final Class<?> classThatShouldNotBeInstantiable) {
-		assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
-		assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
-		final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
+    private static void assertOnlyHasNoArgsConstructor(final Class<?> classThatShouldNotBeInstantiable) {
+        assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
+        assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
+        final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
         assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-		assertEquals(0, constructor.getParameterTypes().length);
-	}
+        assertEquals(0, constructor.getParameterTypes().length);
+    }
 
     private Assert() {
         throw new UnsupportedOperationException("Not instantiable");
