@@ -1,5 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>uk.org.lidalia</groupId>
     <artifactId>parent</artifactId>
@@ -11,6 +15,19 @@
 
   <name>Lidalia Test</name>
   <description>A collection of useful common assertions &amp; matchers for unit testing.</description>
+
+  <scm>
+    <url>https://github.com/Mahoney/lidalia-test</url>
+    <connection>scm:git:git@github.com:Mahoney/lidalia-test.git</connection>
+    <developerConnection>scm:git:git@github.com:Mahoney/lidalia-test.git</developerConnection>
+  </scm>
+
+  <distributionManagement>
+    <site>
+      <id>gh.pages</id>
+      <url>scm:git:git@github.com:Mahoney/lidalia-test.git</url>
+    </site>
+  </distributionManagement>
 
   <issueManagement>
     <system>GitHub Issues</system>
