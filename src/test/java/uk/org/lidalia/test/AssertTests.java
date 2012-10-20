@@ -5,8 +5,10 @@ import java.util.concurrent.Callable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.Assert.assertFinal;
 import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.isNotInstantiable;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class AssertTests {
@@ -49,7 +51,7 @@ public class AssertTests {
     }
 
     @Test public void assertNotInstantiableWithUninstantiableClass() throws Throwable {
-        assertNotInstantiable(Uninstantiable.class);
+        assertThat(Uninstantiable.class, isNotInstantiable());
     }
 
     private static class Uninstantiable {
@@ -63,7 +65,7 @@ public class AssertTests {
             @Override
             public Void call() throws Exception {
                 try {
-                    assertNotInstantiable(Instantiable.class);
+                    assertThat(Instantiable.class, isNotInstantiable());
                     return null;
                 } catch (Throwable throwable) {
                     throw (AssertionError) throwable;
@@ -80,6 +82,6 @@ public class AssertTests {
     }
 
     @Test public void notInstantiable() throws Throwable {
-        assertNotInstantiable(Assert.class);
+        assertThat(Assert.class, isNotInstantiable());
     }
 }
