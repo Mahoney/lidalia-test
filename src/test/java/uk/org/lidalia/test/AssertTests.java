@@ -1,14 +1,18 @@
 package uk.org.lidalia.test;
 
+import java.util.HashSet;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.Assert.assertFinal;
 import static uk.org.lidalia.test.Assert.assertNotInstantiable;
 import static uk.org.lidalia.test.Assert.isNotInstantiable;
+import static uk.org.lidalia.test.Assert.length;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class AssertTests {
@@ -48,6 +52,27 @@ public class AssertTests {
     @Test(expected = NoSuchMethodException.class)
     public void assertFinalWithNonMatchingArgs() throws Exception {
         assertFinal(DummyClass.class, "finalMethod", String.class, String.class);
+    }
+
+    @Test public void lengthWithMatchingLength() {
+        assertThat(asList("foo", "bar"), length(is(2)));
+    }
+
+    @Test public void lengthWithNonMatchingLength() throws Throwable {
+        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    assertThat(new HashSet<String>(asList("foo", "bar")), length(is(0)));
+                    return null;
+                } catch (Throwable throwable) {
+                    throw (AssertionError) throwable;
+                }
+            }
+        });
+        assertEquals("\n" +
+                "Expected: a Collection of length that is <0>\n" +
+                "     but: length of [foo, bar] was <2>", expected.getMessage());
     }
 
     @Test public void assertNotInstantiableWithUninstantiableClass() throws Throwable {

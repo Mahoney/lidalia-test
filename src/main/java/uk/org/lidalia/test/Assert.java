@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.hamcrest.core.CombinableMatcher;
@@ -43,43 +42,41 @@ public final class Assert {
     }
 
     private static Matcher<Class<?>> onlyHasNoArgsConstructor() {
-        Member x = Object.class.getEnclosingConstructor();
-        List<? extends Member> members = asList(Object.class.getDeclaredConstructors());
         return both(directlyExtends(Object.class))
-                .and(constructors(Assert.<List<Constructor<?>>>length(is(1))))
-                .and(constructors(Assert.<Constructor<?>>at(0, hasModifier(PRIVATE)))
-                .and(constructors(at(0, parameterTypes(length(is(0)))));
+                .and(constructors(Assert.<List<Constructor<?>>>length(is(1))));
+//                .and(constructors(Assert.<Constructor<?>>at(0, hasModifier(PRIVATE)))
+//                .and(constructors(at(0, parameterTypes(length(is(0)))));
     }
 
-    private static Matcher<? extends Member> hasModifier(int modifier) {
-        return new TypeSafeDiagnosingMatcher<Member>() {
-
+    public static <T extends Collection<?>> Matcher<T> length(Matcher<Integer> integerMatcher) {
+        return new FeatureMatcher<T, Integer>(integerMatcher, "a Collection of length that", "length") {
             @Override
-            protected boolean matchesSafely(Member item, Description mismatchDescription) {
-                return Modifier.isAbstract();  //To change body of implemented methods use File | Settings | File Templates.
+            protected Integer featureValueOf(T actual) {
+                return actual.size();
             }
-
-            @Override
-            public void describeTo(Description description) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        }
+        };
     }
+
+//    private static Matcher<? extends Member> hasModifier(int modifier) {
+//        return new TypeSafeDiagnosingMatcher<Member>() {
+//
+//            @Override
+//            protected boolean matchesSafely(Member item, Description mismatchDescription) {
+//                return Modifier.isAbstract();  //To change body of implemented methods use File | Settings | File Templates.
+//            }
+//
+//            @Override
+//            public void describeTo(Description description) {
+//                //To change body of implemented methods use File | Settings | File Templates.
+//            }
+//        }
+//    }
 
     private static <E> Matcher<List<? extends E>> at(final Integer index, Matcher<E> matcher) {
         return new FeatureMatcher<List<? extends E>, E>(matcher, "", "") {
             @Override
             protected E featureValueOf(List<? extends E> actual) {
                 return actual.get(index);
-            }
-        };
-    }
-
-    private static <T extends Collection<?>> Matcher<T> length(Matcher<Integer> integerMatcher) {
-        return new FeatureMatcher<T, Integer>(integerMatcher, "", "") {
-            @Override
-            protected Integer featureValueOf(T actual) {
-                return actual.size();
             }
         };
     }
@@ -103,11 +100,11 @@ public final class Assert {
     }
 
     public static Matcher<Class<?>> isNotInstantiable() {
-        both(onlyHasNoArgsConstructor())
-        return new CombinableMatcher<Class<?>>(hasSuperClass(Object.class)).and().and();
-        return new BaseMatcher<Class<?>>() {
-            @Override
-            public boolean matches(Object item) {
+        return onlyHasNoArgsConstructor();
+//        return new CombinableMatcher<Class<?>>(hasSuperClass(Object.class)).and().and();
+//        return new BaseMatcher<Class<?>>() {
+//            @Override
+//            public boolean matches(Object item) {
 //                assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
 //
 //                final InvocationTargetException invocationTargetException = ShouldThrow.shouldThrow(
@@ -129,18 +126,14 @@ public final class Assert {
 //                final Throwable cause = invocationTargetException.getCause();
 //                assertEquals(UnsupportedOperationException.class, cause.getClass());
 //                assertEquals("Not instantiable", cause.getMessage());
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-        };  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    private static Matcher<? super Class<?>> hasSuperClass(Class<Object> objectClass) {
-
+//                return false;  //To change body of implemented methods use File | Settings | File Templates.
+//            }
+//
+//            @Override
+//            public void describeTo(Description description) {
+//                //To change body of implemented methods use File | Settings | File Templates.
+//            }
+//        };  //To change body of created methods use File | Settings | File Templates.
     }
 
     private Assert() {
