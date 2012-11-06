@@ -1,51 +1,53 @@
 package uk.org.lidalia.test;
 
-import static java.lang.reflect.Modifier.PRIVATE;
-import static java.lang.reflect.Modifier.isFinal;
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
-import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.hamcrest.core.CombinableMatcher;
+
+import com.google.common.base.Optional;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
 
 public final class Assert {
 
-    public static void assertFinal(final Class<?> theClass, final String methodName, final Class<?>... parameterTypes)
-            throws NoSuchMethodException {
-        assertTrue(methodName + " is not final", isFinal(theClass.getMethod(methodName, parameterTypes).getModifiers()));
+    public static Matcher<Class<?>> isNotInstantiable() {
+        return both(hasSuperClassThat(CoreMatchers.<Class<?>>is(Object.class)))
+                .and(hasListOfConstructorsWith(both(
+                        Assert.<List<Constructor<?>>>length(is(1)))
+                        .and(Assert.<List<Constructor<?>>, Constructor<?>>atIndex(0, both(
+                                hasConstructorParameterTypes(Assert.<List<Class<?>>>length(is(0))))
+                                .and(hasModifier(Modifier.PRIVATE))
+                                .and(whichThrowsExceptionThat(both(
+                                        isA(UnsupportedOperationException.class))
+                                        .and(hasMessageThat(is("Not instantiable")))))))));
     }
 
-    public static void assertNotInstantiable(final Class<?> classThatShouldNotBeInstantiable) throws Throwable {
-        assertThat(classThatShouldNotBeInstantiable, isNotInstantiable());
+    public static FeatureMatcher<Class<?>, Class<?>> hasSuperClassThat(final Matcher<Class<?>> classMatcher) {
+        return new FeatureMatcher<Class<?>, Class<?>>(classMatcher, "a Class whose immediate super class", "the immediate super class of") {
+            @Override
+            protected Class<?> featureValueOf(Class<?> actual) {
+                return actual.getSuperclass();
+            }
+        };
     }
 
-    private static void assertOnlyHasNoArgsConstructor(final Class<?> classThatShouldNotBeInstantiable) {
-        assertEquals(Object.class, classThatShouldNotBeInstantiable.getSuperclass());
-        assertEquals(1, classThatShouldNotBeInstantiable.getDeclaredConstructors().length);
-        final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructors()[0];
-        assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-        assertEquals(0, constructor.getParameterTypes().length);
-    }
-
-    private static Matcher<Class<?>> onlyHasNoArgsConstructor() {
-        return both(directlyExtends(Object.class))
-                .and(constructors(Assert.<List<Constructor<?>>>length(is(1))));
-//                .and(constructors(Assert.<Constructor<?>>at(0, hasModifier(PRIVATE)))
-//                .and(constructors(at(0, parameterTypes(length(is(0)))));
+    private static FeatureMatcher<Class<?>, List<Constructor<?>>> hasListOfConstructorsWith(Matcher<List<Constructor<?>>> matcher) {
+        return new FeatureMatcher<Class<?>, List<Constructor<?>>>(matcher, "a Class with constructors that are", "the constructors of") {
+            @Override
+            protected List<Constructor<?>> featureValueOf(Class<?> actual) {
+                return asList(actual.getDeclaredConstructors());
+            }
+        };
     }
 
     public static <T extends Collection<?>> Matcher<T> length(Matcher<Integer> integerMatcher) {
@@ -57,83 +59,83 @@ public final class Assert {
         };
     }
 
-//    private static Matcher<? extends Member> hasModifier(int modifier) {
-//        return new TypeSafeDiagnosingMatcher<Member>() {
-//
-//            @Override
-//            protected boolean matchesSafely(Member item, Description mismatchDescription) {
-//                return Modifier.isAbstract();  //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//
-//            @Override
-//            public void describeTo(Description description) {
-//                //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//        }
-//    }
-
-    private static <E> Matcher<List<? extends E>> at(final Integer index, Matcher<E> matcher) {
-        return new FeatureMatcher<List<? extends E>, E>(matcher, "", "") {
+    public static <T extends List<? extends E>, E> Matcher<T> atIndex(final Integer index, Matcher<E> matcher) {
+        return new FeatureMatcher<T, E>(matcher, "a List with element at index " + index + " that", "the element at index " + index + " of") {
             @Override
-            protected E featureValueOf(List<? extends E> actual) {
-                return actual.get(index);
+            protected E featureValueOf(T actual) {
+                if (actual.size() > index) {
+                    return actual.get(index);
+                } else {
+                    throw new AssertionError(actual + " has no element at index " + index);
+                }
             }
         };
     }
 
-    private static FeatureMatcher<Class<?>, Class> directlyExtends(final Class superType) {
-        return new FeatureMatcher<Class<?>, Class>(equalTo(superType), "", "") {
+    public static <T extends Member> Matcher<T> hasModifier(final Modifier modifier) {
+        return new TypeSafeDiagnosingMatcher<T>() {
+
             @Override
-            protected Class featureValueOf(Class actual) {
-                return actual.getSuperclass();
+            protected boolean matchesSafely(T item, Description mismatchDescription) {
+                boolean matches = modifier.isTrueOf(item);
+                if (!matches) {
+                    mismatchDescription.appendValue(item).appendText(" did not have modifier ").appendValue(modifier);
+                }
+                return matches;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("should have modifier " + modifier);
             }
         };
     }
 
-    private static FeatureMatcher<Class<?>, List<Constructor<?>>> constructors(Matcher<List<Constructor<?>>> matcher) {
-        return new FeatureMatcher<Class<?>, List<Constructor<?>>>(matcher, "", "") {
+    private static Matcher<Constructor<?>> hasConstructorParameterTypes(Matcher<List<Class<?>>> parameterMatcher) {
+        return new FeatureMatcher<Constructor<?>, List<Class<?>>>(parameterMatcher, "has parameter types that are", "parameter types of") {
             @Override
-            protected List<Constructor<?>> featureValueOf(Class<?> actual) {
-                return asList(actual.getDeclaredConstructors());
+            protected List<Class<?>> featureValueOf(Constructor<?> actual) {
+                return asList(actual.getParameterTypes());
             }
         };
     }
 
-    public static Matcher<Class<?>> isNotInstantiable() {
-        return onlyHasNoArgsConstructor();
-//        return new CombinableMatcher<Class<?>>(hasSuperClass(Object.class)).and().and();
-//        return new BaseMatcher<Class<?>>() {
-//            @Override
-//            public boolean matches(Object item) {
-//                assertOnlyHasNoArgsConstructor(classThatShouldNotBeInstantiable);
-//
-//                final InvocationTargetException invocationTargetException = ShouldThrow.shouldThrow(
-//                        InvocationTargetException.class,
-//                        "Able to instantiate " + classThatShouldNotBeInstantiable,
-//                        new Callable<Void>() {
-//                            public Void call() throws NoSuchMethodException, InvocationTargetException,
-//                                    InstantiationException, IllegalAccessException {
-//                                final Constructor<?> constructor = classThatShouldNotBeInstantiable.getDeclaredConstructor();
-//                                try {
-//                                    constructor.setAccessible(true);
-//                                    constructor.newInstance();
-//                                    return null;
-//                                } finally {
-//                                    constructor.setAccessible(false);
-//                                }
-//                            }
-//                        });
-//                final Throwable cause = invocationTargetException.getCause();
-//                assertEquals(UnsupportedOperationException.class, cause.getClass());
-//                assertEquals("Not instantiable", cause.getMessage());
-//                return false;  //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//
-//            @Override
-//            public void describeTo(Description description) {
-//                //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//        };  //To change body of created methods use File | Settings | File Templates.
+    private static <T extends Throwable> Matcher<Constructor<?>> whichThrowsExceptionThat(Matcher<T> throwableMatcher) {
+        return new FeatureMatcher<Constructor<?>, T>(throwableMatcher, "which throws an exception that", "exception thrown by") {
+            @Override
+            protected T featureValueOf(Constructor<?> constructor) {
+                try {
+                    constructor.setAccessible(true);
+                    constructor.newInstance();
+                    return null;
+                } catch (InvocationTargetException e) {
+                    return (T) e.getCause();
+                } catch (Exception e) {
+                    throwUnchecked(e);
+                    return null;
+                } finally {
+                    constructor.setAccessible(false);
+                }
+            }
+        };
+    }
+
+    private static Matcher<Throwable> hasMessageThat(Matcher<String> messageMatcher) {
+        return new FeatureMatcher<Throwable, String>(messageMatcher, "has message that", "message of") {
+            @Override
+            protected String featureValueOf(Throwable actual) {
+                return actual.getMessage();
+            }
+        };
+    }
+
+    private static void throwUnchecked(final Throwable ex) {
+        Assert.<RuntimeException>doThrowUnchecked(ex);
+        throw new AssertionError("This code should be unreachable. Something went terribly wrong here!");
+    }
+
+    private static <T extends Throwable> void doThrowUnchecked(Throwable toThrow) throws T {
+        throw (T) toThrow;
     }
 
     private Assert() {
