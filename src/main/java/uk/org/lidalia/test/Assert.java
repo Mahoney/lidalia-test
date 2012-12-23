@@ -11,12 +11,10 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import com.google.common.base.Optional;
-
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
+import static uk.org.lidalia.test.CombinableMatcher.both;
 
 public final class Assert {
 
@@ -101,7 +99,7 @@ public final class Assert {
     }
 
     private static <T extends Throwable> Matcher<Constructor<?>> whichThrowsExceptionThat(Matcher<T> throwableMatcher) {
-        return new FeatureMatcher<Constructor<?>, T>(throwableMatcher, "which throws an exception that", "exception thrown by") {
+        return new FeatureMatcher<Constructor<?>, T>(throwableMatcher, "which throws an exception that", "the exception thrown by") {
             @Override
             protected T featureValueOf(Constructor<?> constructor) {
                 try {

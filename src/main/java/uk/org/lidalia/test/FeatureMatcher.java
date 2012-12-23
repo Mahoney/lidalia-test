@@ -12,7 +12,7 @@ import org.hamcrest.internal.ReflectiveTypeFinder;
  * @param <T> The type of the object to be matched
  * @param <U> The type of the feature to be matched
  */
-public abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
+abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     private static final ReflectiveTypeFinder TYPE_FINDER = new ReflectiveTypeFinder("featureValueOf", 1, 0);
     private final Matcher<? super U> subMatcher;
     private final String featureDescription;
@@ -25,7 +25,7 @@ public abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> 
      * @param featureDescription Descriptive text to use in describeTo
      * @param featureName        Identifying text for mismatch message
      */
-    public FeatureMatcher(Matcher<? super U> subMatcher, String featureDescription, String featureName) {
+    FeatureMatcher(Matcher<? super U> subMatcher, String featureDescription, String featureName) {
         super(TYPE_FINDER);
         this.subMatcher = subMatcher;
         this.featureDescription = featureDescription;
@@ -44,9 +44,8 @@ public abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> 
     protected boolean matchesSafely(T actual, Description mismatch) {
         final U featureValue = featureValueOf(actual);
         if (!subMatcher.matches(featureValue)) {
-//            mismatch.appendText(featureName).appendText(" ");
-            mismatch.appendText(featureName).appendText(" ").appendValue(actual).appendText(" ");
             subMatcher.describeMismatch(featureValue, mismatch);
+            mismatch.appendText(" ").appendText(featureName).appendText(" ").appendValue(actual);
             return false;
         }
         return true;
@@ -54,7 +53,7 @@ public abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> 
 
     @Override
     public final void describeTo(Description description) {
-//        description.appendText(featureDescription).appendText(" ")
-//                .appendDescriptionOf(subMatcher);
+        description.appendText(featureDescription).appendText(" ")
+                .appendDescriptionOf(subMatcher);
     }
 }
