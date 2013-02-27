@@ -6,148 +6,148 @@ public enum Modifier {
 
     PUBLIC {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isPublic(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isPublic(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isPublic(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isPublic(modifiable.getModifiers());
         }
     },
 
     PRIVATE {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isPrivate(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isPrivate(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isPrivate(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isPrivate(modifiable.getModifiers());
         }
     },
 
     PROTECTED {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isProtected(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isProtected(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isProtected(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isProtected(modifiable.getModifiers());
         }
     },
 
     STATIC {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isStatic(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isStatic(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isStatic(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isStatic(modifiable.getModifiers());
         }
     },
 
     FINAL {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isFinal(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isFinal(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isFinal(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isFinal(modifiable.getModifiers());
         }
     },
 
     SYNCHRONIZED {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isSynchronized(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isSynchronized(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isSynchronized(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isSynchronized(modifiable.getModifiers());
         }
     },
 
     VOLATILE {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isVolatile(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isVolatile(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isVolatile(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isVolatile(modifiable.getModifiers());
         }
     },
 
     TRANSIENT {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isTransient(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isTransient(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isTransient(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isTransient(modifiable.getModifiers());
         }
     },
 
     NATIVE {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isNative(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isNative(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isNative(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isNative(modifiable.getModifiers());
         }
     },
 
     INTERFACE {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isInterface(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isInterface(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isInterface(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isInterface(modifiable.getModifiers());
         }
     },
 
     ABSTRACT {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isAbstract(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isAbstract(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isAbstract(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isAbstract(modifiable.getModifiers());
         }
     },
 
     STRICT {
         @Override
-        public boolean isTrueOf(Member member) {
-            return java.lang.reflect.Modifier.isStrict(member.getModifiers());
+        public boolean isTrueOf(Member modifiable) {
+            return java.lang.reflect.Modifier.isStrict(modifiable.getModifiers());
         }
 
         @Override
-        public boolean isTrueOf(Class<?> member) {
-            return java.lang.reflect.Modifier.isStrict(member.getModifiers());
+        public boolean isTrueOf(Class<?> modifiable) {
+            return java.lang.reflect.Modifier.isStrict(modifiable.getModifiers());
         }
     };
 
-    public abstract boolean isTrueOf(Member member);
-    public abstract boolean isTrueOf(Class<?> member);
+    public abstract boolean isTrueOf(Member modifiable);
+    public abstract boolean isTrueOf(Class<?> modifiable);
 }

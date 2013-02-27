@@ -1,21 +1,22 @@
 package uk.org.lidalia.test;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static uk.org.lidalia.test.Assert.atIndex;
-import static uk.org.lidalia.test.Assert.hasModifier;
-import static uk.org.lidalia.test.Assert.hasSuperClassThat;
+import static uk.org.lidalia.test.Assert.aListWhoseElementAtIndex;
+import static uk.org.lidalia.test.Assert.isAMemberWithModifier;
+import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
 import static uk.org.lidalia.test.Assert.isNotInstantiable;
-import static uk.org.lidalia.test.Assert.length;
+import static uk.org.lidalia.test.Assert.aCollectionWhoseLength;
 import static uk.org.lidalia.test.Modifier.FINAL;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
@@ -31,7 +32,7 @@ public class AssertTests {
 
     @Test public void hasModifierFinalWithFinalMethod() throws Exception {
         Method method = DummyClass.class.getMethod("finalMethod");
-        assertThat(method, hasModifier(FINAL));
+        assertThat(method, isAMemberWithModifier(FINAL));
     }
 
     @Test public void hasModifierFinalWithNonFinalMethod() {
@@ -39,98 +40,162 @@ public class AssertTests {
             @Override
             public Void call() throws Exception {
                 Method method = DummyClass.class.getMethod("nonFinalMethod");
-                assertThat(method, hasModifier(FINAL));
+                assertThat(method, isAMemberWithModifier(FINAL));
                 return null;
             }
         });
         assertThat(error.getMessage(), is("\n" +
-                "Expected: should have modifier FINAL\n" +
+                "Expected: is a member with modifier FINAL\n" +
                 "     but: <public void uk.org.lidalia.test.AssertTests$DummyClass.nonFinalMethod()> " +
                 "did not have modifier <FINAL>"));
     }
 
     @Test public void lengthWithMatchingLength() {
-        assertThat(asList("foo", "bar"), length(is(2)));
+        assertThat(asList("foo", "bar"), aCollectionWhoseLength(is(2)));
     }
 
     @Test public void lengthWithNonMatchingLength() {
-        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
-            public Void call() throws Exception {
-                try {
-                    assertThat(new HashSet<String>(asList("foo", "bar")), length(is(0)));
-                    return null;
-                } catch (Throwable throwable) {
-                    throw (AssertionError) throwable;
-                }
+            public void run() {
+                assertThat(asList("foo", "bar"), is(aCollectionWhoseLength(is(0))));
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: a Collection of length that is <0>\n" +
-                "     but: length of [foo, bar] was <2>"));
+                "Expected: is a Collection whose length is <0>\n" +
+                "     but: <[foo, bar]>'s length was <2>"));
     }
 
     @Test public void atIndexCorrectExpectation() {
         final List<String> strings = asList("foo", "bar");
-        assertThat(strings, atIndex(0, is("foo")));
-        assertThat(strings, atIndex(1, is("bar")));
+        assertThat(strings, aListWhoseElementAtIndex(0, is("foo")));
+        assertThat(strings, aListWhoseElementAtIndex(1, is("bar")));
     }
 
     @Test public void atIndexWrongExpectation() {
-        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
-            public Void call() throws Exception {
-                try {
-                    assertThat(asList("foo", "bar"), atIndex(1, is("not bar")));
-                    return null;
-                } catch (Throwable throwable) {
-                    throw (AssertionError) throwable;
-                }
+            public void run() {
+                assertThat(asList("foo", "bar"), aListWhoseElementAtIndex(1, is("not bar")));
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: a List with element at index 1 that is \"not bar\"\n" +
-                "     but: the element at index 1 of [foo, bar] was \"bar\""));
+                "Expected: a List whose element at index 1 is \"not bar\"\n" +
+                "     but: <[foo, bar]>'s element at index 1 was \"bar\""));
     }
 
     @Test public void atIndexWithIndexOutOfBounds() {
-        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
-            public Void call() throws Exception {
-                try {
-                    assertThat(asList("foo", "bar"), atIndex(2, is("something")));
-                    return null;
-                } catch (Throwable throwable) {
-                    throw (AssertionError) throwable;
-                }
+            public void run() {
+                assertThat(asList("foo", "bar"), aListWhoseElementAtIndex(2, is("something")));
             }
         });
         assertThat(expected.getMessage(), is("[foo, bar] has no element at index 2"));
     }
 
-    @Test public void hasSuperClassMatching() {
-        assertThat(Integer.class, hasSuperClassThat(CoreMatchers.<Class<?>>equalTo(Number.class)));
+    @Test public void aClassWhoseSuperClassMatching() {
+        assertThat(Integer.class, is(aClassWhoseSuperClass(is(sameInstance(Number.class)))));
     }
 
-    @Test public void hasSuperClassNonMatching() {
-        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
+    @Test public void aClassWhoseSuperClassNonMatching() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
-            public Void call() throws Exception {
-                try {
-                    assertThat(Integer.class, hasSuperClassThat(CoreMatchers.<Class<?>>is(Object.class)));
-                    return null;
-                } catch (Throwable throwable) {
-                    throw (AssertionError) throwable;
-                }
+            public void run() {
+                assertThat(Integer.class, is(aClassWhoseSuperClass(is(equalTo(Object.class)))));
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: a Class whose immediate super class is <class java.lang.Object>\n" +
-                "     but: immediate super class of class java.lang.Integer was <class java.lang.Number>"));
+                "Expected: is a Class whose super class is <class java.lang.Object>\n" +
+                "     but: <class java.lang.Integer>'s super class was <class java.lang.Number>"));
     }
 
     @Test public void assertNotInstantiableWithUninstantiableClass() {
         assertThat(Uninstantiable.class, isNotInstantiable());
+    }
+
+    @Test public void assertNotInstantiableWithInstantiableClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(Instantiable.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$Instantiable>'s constructors <[private uk.org.lidalia.test.AssertTests$Instantiable()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$Instantiable()>'s thrown exception was null"));
+    }
+
+    @Test public void assertNotInstantiableWithWrongExceptionTypeClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(WrongExceptionType.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$WrongExceptionType>'s constructors <[private uk.org.lidalia.test.AssertTests$WrongExceptionType()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$WrongExceptionType()>'s thrown exception <java.lang.IllegalArgumentException: Not instantiable> is a java.lang.IllegalArgumentException"));
+    }
+
+    @Test public void assertNotInstantiableWithWrongExceptionMessageClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(WrongExceptionMessage.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$WrongExceptionMessage>'s constructors <[private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()>'s thrown exception <java.lang.UnsupportedOperationException: other message>'s message was \"other message\""));
+    }
+
+    @Test public void assertNotInstantiableWithPublicConstructorClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(PublicConstructor.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$PublicConstructor>'s constructors <[public uk.org.lidalia.test.AssertTests$PublicConstructor()]>'s element at index 0 <public uk.org.lidalia.test.AssertTests$PublicConstructor()> did not have modifier <PRIVATE>"));
+    }
+
+    @Test public void assertNotInstantiableWithWrongSuperClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(WrongSuperClass.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$WrongSuperClass>'s super class was <class java.util.Date>"));
+    }
+
+    @Test public void assertNotInstantiableWithConstructorWithParamClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(ConstructorWithParam.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$ConstructorWithParam>'s constructors <[private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)>'s parameter types <[class java.lang.String]>'s length was <1>"));
+    }
+
+    @Test public void assertNotInstantiableWithMultipleConstructorsClass() {
+        AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
+            @Override
+            public void run() {
+                assertThat(MultipleConstructors.class, isNotInstantiable());
+            }
+        });
+        assertThat(expected.getMessage(), is("\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "     but: <class uk.org.lidalia.test.AssertTests$MultipleConstructors>'s constructors <[private uk.org.lidalia.test.AssertTests$MultipleConstructors(), private uk.org.lidalia.test.AssertTests$MultipleConstructors(java.lang.String)]>'s length was <2>"));
     }
 
     private static class Uninstantiable {
@@ -139,27 +204,47 @@ public class AssertTests {
         }
     }
 
-    @Test public void assertNotInstantiableWithInstantiableClass() {
-//        AssertionError expected = shouldThrow(AssertionError.class, new Callable<Void>() {
-//            @Override
-//            public Void call() throws Exception {
-//                try {
-                    assertThat(Instantiable.class, isNotInstantiable());
-//                    return null;
-//                } catch (Throwable throwable) {
-//                    throw (AssertionError) throwable;
-//                }
-//            }
-//        });
-//        assertThat(expected.getMessage(), is("\n" +
-//                "Expected: (a Class whose immediate super class is <class java.lang.Object> and a Class with constructors that are (a Collection of length that is <1> and a List with element at index 0 that ((has parameter types that are a Collection of length that is <0> and should have modifier PRIVATE) and  (is an instance of java.lang.UnsupportedOperationException and  is \"Not instantiable\"))))\n" +
-//                "     but: a Class with constructors that are (a Collection of length that is <1> and a List with element at index 0 that ((has parameter types that are a Collection of length that is <0> and should have modifier PRIVATE) and  (is an instance of java.lang.UnsupportedOperationException and  is \"Not instantiable\"))) the constructors of class uk.org.lidalia.test.AssertTests$Instantiable a List with element at index 0 that ((has parameter types that are a Collection of length that is <0> and should have modifier PRIVATE) and  (is an instance of java.lang.UnsupportedOperationException and  is \"Not instantiable\")) the element at index 0 of [private uk.org.lidalia.test.AssertTests$Instantiable()]  (is an instance of java.lang.UnsupportedOperationException and  is \"Not instantiable\")  of private uk.org.lidalia.test.AssertTests$Instantiable() is an instance of java.lang.UnsupportedOperationException <java.lang.RuntimeException> is a java.lang.RuntimeException"));
+    private static class PublicConstructor {
+        public PublicConstructor() {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
+    }
+
+    private static class WrongExceptionType {
+        private WrongExceptionType() {
+            throw new IllegalArgumentException("Not instantiable");
+        }
+    }
+
+    private static class WrongExceptionMessage {
+        private WrongExceptionMessage() {
+            throw new UnsupportedOperationException("other message");
+        }
+    }
+
+    private static class WrongSuperClass extends Date {
+        private WrongSuperClass() {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
+    }
+
+    private static class ConstructorWithParam {
+        private ConstructorWithParam(String param) {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
+    }
+
+    private static class MultipleConstructors {
+        private MultipleConstructors() {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
+
+        private MultipleConstructors(String param) {
+            throw new UnsupportedOperationException("Not instantiable");
+        }
     }
 
     private static class Instantiable {
-        private Instantiable() {
-            throw new RuntimeException();
-        }
     }
 
     @Test public void notInstantiable() {

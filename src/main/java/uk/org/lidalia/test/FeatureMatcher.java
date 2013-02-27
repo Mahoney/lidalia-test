@@ -14,7 +14,7 @@ import org.hamcrest.internal.ReflectiveTypeFinder;
  */
 abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     private static final ReflectiveTypeFinder TYPE_FINDER = new ReflectiveTypeFinder("featureValueOf", 1, 0);
-    private final Matcher<? super U> subMatcher;
+    private final Matcher<? extends U> subMatcher;
     private final String featureDescription;
     private final String featureName;
 
@@ -25,7 +25,7 @@ abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
      * @param featureDescription Descriptive text to use in describeTo
      * @param featureName        Identifying text for mismatch message
      */
-    FeatureMatcher(Matcher<? super U> subMatcher, String featureDescription, String featureName) {
+    FeatureMatcher(Matcher<? extends U> subMatcher, String featureDescription, String featureName) {
         super(TYPE_FINDER);
         this.subMatcher = subMatcher;
         this.featureDescription = featureDescription;
@@ -44,8 +44,8 @@ abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     protected boolean matchesSafely(T actual, Description mismatch) {
         final U featureValue = featureValueOf(actual);
         if (!subMatcher.matches(featureValue)) {
+            mismatch.appendValue(actual).appendText(featureName).appendText(" ");
             subMatcher.describeMismatch(featureValue, mismatch);
-            mismatch.appendText(" ").appendText(featureName).appendText(" ").appendValue(actual);
             return false;
         }
         return true;

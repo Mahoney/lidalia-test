@@ -2,8 +2,8 @@ package uk.org.lidalia.test;
 
 import java.util.concurrent.Callable;
 
-import org.junit.*;
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;

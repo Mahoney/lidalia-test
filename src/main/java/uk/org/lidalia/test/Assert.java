@@ -6,12 +6,12 @@ import java.lang.reflect.Member;
 import java.util.Collection;
 import java.util.List;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static uk.org.lidalia.test.CombinableMatcher.both;
@@ -19,28 +19,28 @@ import static uk.org.lidalia.test.CombinableMatcher.both;
 public final class Assert {
 
     public static Matcher<Class<?>> isNotInstantiable() {
-        return both(hasSuperClassThat(CoreMatchers.<Class<?>>is(Object.class)))
-                .and(hasListOfConstructorsWith(both(
-                        Assert.<List<Constructor<?>>>length(is(1)))
-                        .and(Assert.<List<Constructor<?>>, Constructor<?>>atIndex(0, both(
-                                hasConstructorParameterTypes(Assert.<List<Class<?>>>length(is(0))))
-                                .and(hasModifier(Modifier.PRIVATE))
-                                .and(whichThrowsExceptionThat(both(
+        return both(aClassWhoseSuperClass(is(equalTo(Object.class))))
+                .and(aClassWhoseSetOfConstructors(both(
+                        is(Assert.<List<Constructor<?>>>aCollectionWhoseLength(is(1))))
+                        .and(is(Assert.<List<Constructor<?>>, Constructor<?>>aListWhoseElementAtIndex(0, both(
+                                is(aConstructorWhoseParameterTypes(is(Assert.<List<Class<?>>>aCollectionWhoseLength(is(0))))))
+                                .and(isAMemberWithModifier(Modifier.PRIVATE))
+                                .and(aConstructorWhoseThrownException(both(
                                         isA(UnsupportedOperationException.class))
-                                        .and(hasMessageThat(is("Not instantiable")))))))));
+                                        .and(is(aThrowableWhoseMessage(is("Not instantiable")))))))))));
     }
 
-    public static FeatureMatcher<Class<?>, Class<?>> hasSuperClassThat(final Matcher<Class<?>> classMatcher) {
-        return new FeatureMatcher<Class<?>, Class<?>>(classMatcher, "a Class whose immediate super class", "the immediate super class of") {
+    public static <U, T extends U> FeatureMatcher<Class<? extends T>, Class<? extends U>> aClassWhoseSuperClass(final Matcher<? extends Class<? extends U>> classMatcher) {
+        return new FeatureMatcher<Class<? extends T>, Class<? extends U>>(classMatcher, "a Class whose super class", "'s super class") {
             @Override
-            protected Class<?> featureValueOf(Class<?> actual) {
-                return actual.getSuperclass();
+            protected Class<? extends U> featureValueOf(Class<? extends T> actual) {
+                return (Class<? extends U>) actual.getSuperclass();
             }
         };
     }
 
-    private static FeatureMatcher<Class<?>, List<Constructor<?>>> hasListOfConstructorsWith(Matcher<List<Constructor<?>>> matcher) {
-        return new FeatureMatcher<Class<?>, List<Constructor<?>>>(matcher, "a Class with constructors that are", "the constructors of") {
+    private static FeatureMatcher<Class<?>, List<Constructor<?>>> aClassWhoseSetOfConstructors(Matcher<List<Constructor<?>>> matcher) {
+        return new FeatureMatcher<Class<?>, List<Constructor<?>>>(matcher, "a Class whose set of constructors", "'s constructors") {
             @Override
             protected List<Constructor<?>> featureValueOf(Class<?> actual) {
                 return asList(actual.getDeclaredConstructors());
@@ -48,8 +48,8 @@ public final class Assert {
         };
     }
 
-    public static <T extends Collection<?>> Matcher<T> length(Matcher<Integer> integerMatcher) {
-        return new FeatureMatcher<T, Integer>(integerMatcher, "a Collection of length that", "length") {
+    public static <T extends Collection<?>> Matcher<T> aCollectionWhoseLength(Matcher<Integer> integerMatcher) {
+        return new FeatureMatcher<T, Integer>(integerMatcher, "a Collection whose length", "'s length") {
             @Override
             protected Integer featureValueOf(T actual) {
                 return actual.size();
@@ -57,8 +57,8 @@ public final class Assert {
         };
     }
 
-    public static <T extends List<? extends E>, E> Matcher<T> atIndex(final Integer index, Matcher<E> matcher) {
-        return new FeatureMatcher<T, E>(matcher, "a List with element at index " + index + " that", "the element at index " + index + " of") {
+    public static <T extends List<? extends E>, E> Matcher<T> aListWhoseElementAtIndex(final Integer index, Matcher<E> matcher) {
+        return new FeatureMatcher<T, E>(matcher, "a List whose element at index " + index, "'s element at index " + index) {
             @Override
             protected E featureValueOf(T actual) {
                 if (actual.size() > index) {
@@ -70,7 +70,7 @@ public final class Assert {
         };
     }
 
-    public static <T extends Member> Matcher<T> hasModifier(final Modifier modifier) {
+    public static <T extends Member> Matcher<T> isAMemberWithModifier(final Modifier modifier) {
         return new TypeSafeDiagnosingMatcher<T>() {
 
             @Override
@@ -84,13 +84,13 @@ public final class Assert {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("should have modifier " + modifier);
+                description.appendText("is a member with modifier " + modifier);
             }
         };
     }
 
-    private static Matcher<Constructor<?>> hasConstructorParameterTypes(Matcher<List<Class<?>>> parameterMatcher) {
-        return new FeatureMatcher<Constructor<?>, List<Class<?>>>(parameterMatcher, "has parameter types that are", "parameter types of") {
+    private static Matcher<Constructor<?>> aConstructorWhoseParameterTypes(Matcher<List<Class<?>>> parameterMatcher) {
+        return new FeatureMatcher<Constructor<?>, List<Class<?>>>(parameterMatcher, "a constructor whose parameter types", "'s parameter types") {
             @Override
             protected List<Class<?>> featureValueOf(Constructor<?> actual) {
                 return asList(actual.getParameterTypes());
@@ -98,19 +98,18 @@ public final class Assert {
         };
     }
 
-    private static <T extends Throwable> Matcher<Constructor<?>> whichThrowsExceptionThat(Matcher<T> throwableMatcher) {
-        return new FeatureMatcher<Constructor<?>, T>(throwableMatcher, "which throws an exception that", "the exception thrown by") {
+    private static Matcher<Constructor<?>> aConstructorWhoseThrownException(Matcher<? extends Throwable> throwableMatcher) {
+        return new FeatureMatcher<Constructor<?>, Throwable>(throwableMatcher, "a constructor whose thrown exception", "'s thrown exception") {
             @Override
-            protected T featureValueOf(Constructor<?> constructor) {
+            protected Throwable featureValueOf(Constructor<?> constructor) {
                 try {
                     constructor.setAccessible(true);
                     constructor.newInstance();
                     return null;
                 } catch (InvocationTargetException e) {
-                    return (T) e.getCause();
+                    return e.getCause();
                 } catch (Exception e) {
-                    throwUnchecked(e);
-                    return null;
+                    return throwUnchecked(e, null);
                 } finally {
                     constructor.setAccessible(false);
                 }
@@ -118,8 +117,8 @@ public final class Assert {
         };
     }
 
-    private static Matcher<Throwable> hasMessageThat(Matcher<String> messageMatcher) {
-        return new FeatureMatcher<Throwable, String>(messageMatcher, "has message that", "message of") {
+    private static Matcher<Throwable> aThrowableWhoseMessage(Matcher<String> messageMatcher) {
+        return new FeatureMatcher<Throwable, String>(messageMatcher, "a throwable whose message", "'s message") {
             @Override
             protected String featureValueOf(Throwable actual) {
                 return actual.getMessage();
@@ -127,7 +126,7 @@ public final class Assert {
         };
     }
 
-    private static void throwUnchecked(final Throwable ex) {
+    private static <T> T throwUnchecked(final Throwable ex, T shouldBeNullAndNotUsed) {
         Assert.<RuntimeException>doThrowUnchecked(ex);
         throw new AssertionError("This code should be unreachable. Something went terribly wrong here!");
     }
