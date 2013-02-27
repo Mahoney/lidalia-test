@@ -12,67 +12,67 @@ public final class ShouldThrow {
 
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, Optional.<String>absent(), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
             final String message,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, Optional.<String>absent(), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
             final String message,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
             final String message,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         shouldThrow(expectedThrowable, Optional.of(message), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         shouldThrow(expectedThrowable, Optional.<String>absent(), workThatShouldThrowThrowable);
     }
 
     public static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
             final String message,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         shouldThrow(expectedThrowable, Optional.of(message), workThatShouldThrowThrowable);
     }
 
     private static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
             final Optional<String> message,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         shouldThrow(expectedThrowable, message, toCallable(workThatShouldThrowThrowable));
     }
 
     private static <ThrowableType extends Throwable> void shouldThrow(
             final ThrowableType expectedThrowable,
             final Optional<String> message,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         final ThrowableType actualThrowable = shouldThrow(getClass(expectedThrowable), message, workThatShouldThrowThrowable);
         assertSame(message.or("Did not throw correct Throwable;"), expectedThrowable, actualThrowable);
     }
@@ -80,7 +80,7 @@ public final class ShouldThrow {
     private static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
             final Optional<String> message,
-            final Runnable workThatShouldThrowThrowable) throws Throwable {
+            final Runnable workThatShouldThrowThrowable) {
         final Callable<Void> workAsCallable = toCallable(workThatShouldThrowThrowable);
         return shouldThrow(expectedThrowableType, message, workAsCallable);
     }
@@ -99,7 +99,7 @@ public final class ShouldThrow {
     private static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
             final Optional<String> message,
-            final Callable<Void> workThatShouldThrowThrowable) throws Throwable {
+            final Callable<Void> workThatShouldThrowThrowable) {
         try {
             workThatShouldThrowThrowable.call();
         } catch (final Throwable actualThrowableThrown) { // NOPMD Throwable is thrown if it was not expected
@@ -107,7 +107,7 @@ public final class ShouldThrow {
             if (instanceOf(trueThrowable, expectedThrowableType)) {
                 return (ThrowableType) trueThrowable;
             }
-            throw actualThrowableThrown;
+            throwUnchecked(actualThrowableThrown);
         }
         throw new AssertionError(message.or("No exception thrown"));
     }
@@ -132,6 +132,16 @@ public final class ShouldThrow {
     @SuppressWarnings("unchecked")
     private static <CompileTimeType> Class<? extends CompileTimeType> getClass(final CompileTimeType object) {
         return (Class<? extends CompileTimeType>) object.getClass();
+    }
+
+    private static void throwUnchecked(final Throwable ex) {
+        ShouldThrow.<RuntimeException>doThrowUnchecked(ex);
+        throw new AssertionError("This code should be unreachable. Something went terribly wrong here!");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void doThrowUnchecked(Throwable toThrow) throws T {
+        throw (T) toThrow;
     }
 
     private ShouldThrow() {

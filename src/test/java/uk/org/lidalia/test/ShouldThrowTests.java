@@ -2,10 +2,10 @@ package uk.org.lidalia.test;
 
 import java.util.concurrent.Callable;
 
-import org.junit.*;
 import org.junit.Assert;
+import org.junit.Test;
 
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class ShouldThrowTests {
@@ -13,7 +13,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowReturnsExpectedException() throws Throwable {
+    public void shouldThrowReturnsExpectedException() {
         final NullPointerException expected = new NullPointerException();
         NullPointerException actual = shouldThrow(NullPointerException.class, new Callable<Void>() {
             @Override
@@ -25,7 +25,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowReturnsExpectedError() throws Throwable {
+    public void shouldThrowReturnsExpectedError() {
         final OutOfMemoryError expected = new OutOfMemoryError();
         OutOfMemoryError actual = shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
             @Override
@@ -37,7 +37,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsUnexpectedException() throws Throwable {
+    public void shouldThrowThrowsUnexpectedException() {
         final NullPointerException toBeThrown = new NullPointerException();
         try {
             shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
@@ -53,7 +53,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+    public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrown() {
         try {
             shouldThrow(OutOfMemoryError.class, new Callable<Void>() {
                 @Override
@@ -68,7 +68,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsAssertionFailedErrorWithMessage() throws Throwable {
+    public void shouldThrowThrowsAssertionFailedErrorWithMessage() {
         try {
             shouldThrow(OutOfMemoryError.class, "Where's out of memory?", new Callable<Void>() {
                 @Override
@@ -83,7 +83,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstancePassesWithExpectedException() throws Throwable {
+    public void shouldThrowInstancePassesWithExpectedException() {
         final NullPointerException expected = new NullPointerException();
         shouldThrow(expected, new Callable<Void>() {
             @Override
@@ -94,7 +94,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstancePassesWithExpectedError() throws Throwable {
+    public void shouldThrowInstancePassesWithExpectedError() {
         final OutOfMemoryError expected = new OutOfMemoryError();
         shouldThrow(expected, new Callable<Void>() {
             @Override
@@ -105,7 +105,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsUnexpectedException() throws Throwable {
+    public void shouldThrowInstanceThrowsUnexpectedException() {
         final NullPointerException toBeThrown = new NullPointerException();
         try {
             shouldThrow(new OutOfMemoryError(), new Callable<Void>() {
@@ -121,7 +121,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrown() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrown() {
         try {
             shouldThrow(new OutOfMemoryError(), new Callable<Void>() {
                 @Override
@@ -136,7 +136,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrown() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrown() {
         try {
             shouldThrow(new OutOfMemoryError(), new Callable<Void>() {
                 @Override
@@ -151,7 +151,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrown() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrown() {
         try {
             shouldThrow(new OutOfMemoryError(), "Where's my error?", new Callable<Void>() {
                 @Override
@@ -166,7 +166,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrown() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrown() {
         try {
             shouldThrow(new OutOfMemoryError(), "Where's my error?", new Callable<Void>() {
                 @Override
@@ -181,7 +181,7 @@ public class ShouldThrowTests {
     }//NEW
 
     @Test
-    public void shouldThrowReturnsExpectedExceptionForRunnable() throws Throwable {
+    public void shouldThrowReturnsExpectedExceptionForRunnable() {
         final NullPointerException expected = new NullPointerException();
         NullPointerException actual = shouldThrow(NullPointerException.class, new Runnable() {
             @Override
@@ -193,7 +193,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowReturnsExpectedErrorForRunnable() throws Throwable {
+    public void shouldThrowReturnsExpectedErrorForRunnable() {
         final OutOfMemoryError expected = new OutOfMemoryError();
         OutOfMemoryError actual = shouldThrow(OutOfMemoryError.class, new Runnable() {
             @Override
@@ -205,7 +205,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsUnexpectedExceptionForRunnable() throws Throwable {
+    public void shouldThrowThrowsUnexpectedExceptionForRunnable() {
         final NullPointerException toBeThrown = new NullPointerException();
         try {
             shouldThrow(OutOfMemoryError.class, new Runnable() {
@@ -221,7 +221,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() throws Throwable {
+    public void shouldThrowThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() {
         try {
             shouldThrow(OutOfMemoryError.class, new Runnable() {
                 @Override
@@ -235,7 +235,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowThrowsAssertionFailedErrorWithMessageForRunnable() throws Throwable {
+    public void shouldThrowThrowsAssertionFailedErrorWithMessageForRunnable() {
         try {
             shouldThrow(OutOfMemoryError.class, "Where's out of memory?", new Runnable() {
                 @Override
@@ -249,7 +249,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstancePassesWithExpectedExceptionForRunnable() throws Throwable {
+    public void shouldThrowInstancePassesWithExpectedExceptionForRunnable() {
         final NullPointerException expected = new NullPointerException();
         shouldThrow(expected, new Runnable() {
             @Override
@@ -260,7 +260,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstancePassesWithExpectedErrorForRunnable() throws Throwable {
+    public void shouldThrowInstancePassesWithExpectedErrorForRunnable() {
         final OutOfMemoryError expected = new OutOfMemoryError();
         shouldThrow(expected, new Runnable() {
             @Override
@@ -271,7 +271,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsUnexpectedExceptionForRunnable() throws Throwable {
+    public void shouldThrowInstanceThrowsUnexpectedExceptionForRunnable() {
         final NullPointerException toBeThrown = new NullPointerException();
         try {
             shouldThrow(new OutOfMemoryError(), new Runnable() {
@@ -287,7 +287,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorIfNoExceptionThrownForRunnable() {
         try {
             shouldThrow(new OutOfMemoryError(), new Runnable() {
                 @Override
@@ -301,7 +301,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrownForRunnable() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfNoExceptionThrownForRunnable() {
         try {
             shouldThrow(new OutOfMemoryError(), "Where's my error?", new Runnable() {
                 @Override
@@ -315,7 +315,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrownForRunnable() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorIfDifferentExceptionThrownForRunnable() {
         try {
             shouldThrow(new OutOfMemoryError(), new Runnable() {
                 @Override
@@ -330,7 +330,7 @@ public class ShouldThrowTests {
     }
 
     @Test
-    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrownForRunnable() throws Throwable {
+    public void shouldThrowInstanceThrowsAssertionFailedErrorWithMessageIfDifferentExceptionThrownForRunnable() {
         try {
             shouldThrow(new OutOfMemoryError(), "Where's my error?", new Runnable() {
                 @Override
@@ -344,7 +344,7 @@ public class ShouldThrowTests {
         }
     }
 
-    @Test public void notInstantiable() throws Throwable {
-        assertNotInstantiable(ShouldThrow.class);
+    @Test public void notInstantiable() {
+        assertThat(ShouldThrow.class, uk.org.lidalia.test.Assert.isNotInstantiable());
     }
 }

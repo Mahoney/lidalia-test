@@ -6,8 +6,9 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static uk.org.lidalia.test.Assert.assertNotInstantiable;
+import static uk.org.lidalia.test.Assert.isNotInstantiable;
 import static uk.org.lidalia.test.Values.uniqueValueFor;
 
 public class ValuesTests {
@@ -171,6 +172,6 @@ public class ValuesTests {
 
     @Test
     public void notInstantiable() throws Throwable {
-        assertNotInstantiable(Values.class);
+        assertThat(Values.class, isNotInstantiable());
     }
 }
