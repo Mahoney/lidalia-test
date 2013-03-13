@@ -1,21 +1,23 @@
 package uk.org.lidalia.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
-import java.util.ArrayList;
-
 class CombinableMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     private final Matcher<? super T> matcher;
 
-    CombinableMatcher(Matcher<? super T> matcher) {
+    CombinableMatcher(final Matcher<? super T> matcher) {
+        super();
         this.matcher = matcher;
     }
 
     @Override
-    protected boolean matchesSafely(T item, Description mismatch) {
+    protected boolean matchesSafely(final T item, final Description mismatch) {
         if (!matcher.matches(item)) {
             matcher.describeMismatch(item, mismatch);
             return false;
@@ -24,16 +26,16 @@ class CombinableMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     @Override
-    public void describeTo(Description description) {
+    public void describeTo(final Description description) {
         description.appendDescriptionOf(matcher);
     }
 
-    CombinableMatcher<T> and(Matcher<? super T> other) {
-        return new CombinableMatcher<T>(new AllOf<T>(templatedListWith(other)));
+    CombinableMatcher<T> and(final Matcher<? super T> other) {
+        return new CombinableMatcher<>(new AllOf<>(templatedListWith(other)));
     }
 
-    private ArrayList<Matcher<? super T>> templatedListWith(Matcher<? super T> other) {
-        ArrayList<Matcher<? super T>> matchers = new ArrayList<Matcher<? super T>>();
+    private List<Matcher<? super T>> templatedListWith(final Matcher<? super T> other) {
+        final List<Matcher<? super T>> matchers = new ArrayList<>();
         matchers.add(matcher);
         matchers.add(other);
         return matchers;
@@ -46,7 +48,7 @@ class CombinableMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
      * <pre>assertThat("fab", both(containsString("a")).and(containsString("b")))</pre>
      */
     @Factory
-    static <LHS> CombinableMatcher<LHS> both(Matcher<? super LHS> matcher) {
-        return new CombinableMatcher<LHS>(matcher);
+    static <LHS> CombinableMatcher<LHS> both(final Matcher<? super LHS> matcher) {
+        return new CombinableMatcher<>(matcher);
     }
 }

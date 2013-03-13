@@ -2,12 +2,7 @@ package uk.org.lidalia.test;
 
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Calculates the logical conjunction of multiple matchers. Evaluation is shortcut, so
@@ -17,15 +12,16 @@ class AllOf<T> extends DiagnosingMatcher<T> {
 
     private final Iterable<Matcher<? super T>> matchers;
 
-    AllOf(Iterable<Matcher<? super T>> matchers) {
+    AllOf(final Iterable<Matcher<? super T>> matchers) {
+        super();
         this.matchers = matchers;
     }
 
     @Override
-    public boolean matches(Object o, Description mismatch) {
-        for (Matcher<? super T> matcher : matchers) {
-            if (!matcher.matches(o)) {
-                matcher.describeMismatch(o, mismatch);
+    public boolean matches(final Object object, final Description mismatch) {
+        for (final Matcher<? super T> matcher : matchers) {
+            if (!matcher.matches(object)) {
+                matcher.describeMismatch(object, mismatch);
                 return false;
             }
         }
@@ -33,7 +29,7 @@ class AllOf<T> extends DiagnosingMatcher<T> {
     }
 
     @Override
-    public void describeTo(Description description) {
+    public void describeTo(final Description description) {
         description.appendList("(", " " + "and" + " ", ")", matchers);
     }
 }

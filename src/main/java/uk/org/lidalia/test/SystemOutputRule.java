@@ -16,7 +16,7 @@ public class SystemOutputRule implements TestRule {
     private final PrintStream originalSysErr = System.err;
 
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(final Statement base, final Description description) {
         return new DebriefableSystemOutputsStatement(base, sysOut, sysErr, originalSysOut, originalSysErr);
     }
 
@@ -35,8 +35,9 @@ public class SystemOutputRule implements TestRule {
         private final PrintStream originalSysOut;
         private final PrintStream originalSysErr;
 
-        public DebriefableSystemOutputsStatement(Statement base, OutputStream sysOut, OutputStream sysErr,
-                                                 PrintStream originalSysOut, PrintStream originalSysErr) {
+        public DebriefableSystemOutputsStatement(final Statement base, final OutputStream sysOut, final OutputStream sysErr,
+                                                 final PrintStream originalSysOut, final PrintStream originalSysErr) {
+            super();
             this.base = base;
             this.sysOut = sysOut;
             this.sysErr = sysErr;

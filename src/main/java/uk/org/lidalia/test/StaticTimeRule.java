@@ -19,18 +19,19 @@ public class StaticTimeRule implements TestRule {
         return always(now);
     }
 
-    public static StaticTimeRule always(ReadableInstant instant) {
+    public static StaticTimeRule always(final ReadableInstant instant) {
         return new StaticTimeRule(instant);
     }
 
     private final ReadableInstant instant;
 
-    private StaticTimeRule(ReadableInstant instant) {
+    private StaticTimeRule(final ReadableInstant instant) {
+        super();
         this.instant = instant;
     }
 
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(final Statement base, final Description description) {
         return new StaticTimeStatement(base, instant);
     }
 
@@ -42,7 +43,8 @@ public class StaticTimeRule implements TestRule {
         private final Statement base;
         private final ReadableInstant instant;
 
-        public StaticTimeStatement(Statement base, ReadableInstant instant) {
+        public StaticTimeStatement(final Statement base, final ReadableInstant instant) {
+            super();
             this.base = base;
             this.instant = instant;
         }

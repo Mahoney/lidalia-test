@@ -134,13 +134,13 @@ public final class ShouldThrow {
         return (Class<? extends CompileTimeType>) object.getClass();
     }
 
-    private static void throwUnchecked(final Throwable ex) {
-        ShouldThrow.<RuntimeException>doThrowUnchecked(ex);
+    private static void throwUnchecked(final Throwable toThrow) {
+        ShouldThrow.<RuntimeException>doThrowUnchecked(toThrow);
         throw new AssertionError("This code should be unreachable. Something went terribly wrong here!");
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void doThrowUnchecked(Throwable toThrow) throws T {
+    private static <T extends Throwable> void doThrowUnchecked(final Throwable toThrow) throws T {
         throw (T) toThrow;
     }
 

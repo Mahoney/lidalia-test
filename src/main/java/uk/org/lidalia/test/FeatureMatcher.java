@@ -19,13 +19,11 @@ abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     private final String featureName;
 
     /**
-     * Constructor
-     *
      * @param subMatcher         The matcher to apply to the feature
      * @param featureDescription Descriptive text to use in describeTo
      * @param featureName        Identifying text for mismatch message
      */
-    FeatureMatcher(Matcher<? extends U> subMatcher, String featureDescription, String featureName) {
+    FeatureMatcher(final Matcher<? extends U> subMatcher, final String featureDescription, final String featureName) {
         super(TYPE_FINDER);
         this.subMatcher = subMatcher;
         this.featureDescription = featureDescription;
@@ -41,7 +39,7 @@ abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     protected abstract U featureValueOf(T actual);
 
     @Override
-    protected boolean matchesSafely(T actual, Description mismatch) {
+    protected boolean matchesSafely(final T actual, final Description mismatch) {
         final U featureValue = featureValueOf(actual);
         if (!subMatcher.matches(featureValue)) {
             mismatch.appendValue(actual).appendText(featureName).appendText(" ");
@@ -52,7 +50,7 @@ abstract class FeatureMatcher<T, U> extends TypeSafeDiagnosingMatcher<T> {
     }
 
     @Override
-    public final void describeTo(Description description) {
+    public final void describeTo(final Description description) {
         description.appendText(featureDescription).appendText(" ")
                 .appendDescriptionOf(subMatcher);
     }
