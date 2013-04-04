@@ -23,7 +23,7 @@ import static uk.org.lidalia.test.Assert.isAMemberWithModifier;
 import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
 import static uk.org.lidalia.test.Assert.isNotInstantiable;
 import static uk.org.lidalia.test.Assert.aCollectionWhoseLength;
-import static uk.org.lidalia.test.Modifier.FINAL;
+import static uk.org.lidalia.lang.Modifier.FINAL;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class AssertTests {
