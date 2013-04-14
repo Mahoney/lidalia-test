@@ -8,22 +8,17 @@ import org.junit.Test;
 
 import uk.org.lidalia.lang.Task;
 
-import static java.lang.System.lineSeparator;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static uk.org.lidalia.test.Assert.aListWhoseElementAtIndex;
-import static uk.org.lidalia.test.Assert.isThrownBy;
-import static uk.org.lidalia.test.Assert.isAMemberWithModifier;
-import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
-import static uk.org.lidalia.test.Assert.isNotInstantiable;
-import static uk.org.lidalia.test.Assert.aCollectionWhoseLength;
 import static uk.org.lidalia.lang.Modifier.FINAL;
+import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
+import static uk.org.lidalia.test.Assert.aCollectionWhoseLength;
+import static uk.org.lidalia.test.Assert.aListWhoseElementAtIndex;
+import static uk.org.lidalia.test.Assert.isAMemberWithModifier;
+import static uk.org.lidalia.test.Assert.isNotInstantiable;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class AssertTests {
@@ -201,67 +196,6 @@ public class AssertTests {
         assertThat(expected.getMessage(), is("\n" +
                 "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$MultipleConstructors>'s constructors <[private uk.org.lidalia.test.AssertTests$MultipleConstructors(), private uk.org.lidalia.test.AssertTests$MultipleConstructors(java.lang.String)]>'s length was <2>"));
-    }
-
-    @Test
-    public void assertDoesThrowPassesWithExpectedException() {
-        final NullPointerException expected = new NullPointerException();
-        assertThat(expected, isThrownBy(new Runnable() {
-            @Override
-            public void run() {
-                throw expected;
-            }
-        }));
-    }
-
-    @Test
-    public void assertDoesThrowThrowsUnexpectedException() {
-        final NullPointerException toBeThrown = new NullPointerException();
-        try {
-            assertThat(new OutOfMemoryError(), isThrownBy(new Runnable() {
-                @Override
-                public void run() {
-                    throw toBeThrown;
-                }
-            }));
-            fail("The unexpected null pointer exception should have been thrown");
-        } catch (NullPointerException npe) {
-            assertSame(toBeThrown, npe);
-        }
-    }
-
-    @Test
-    public void assertDoesThrowThrowsAssertionFailedErrorIfDifferentInstanceOfSameExceptionThrown() {
-        try {
-            assertThat(new OutOfMemoryError(), isThrownBy(new Runnable() {
-                @Override
-                public void run() {
-                    throw new OutOfMemoryError();
-                }
-            }));
-            fail("An assertion failed error should have been thrown as no throwable occured");
-        } catch (AssertionError error) {
-            assertEquals(lineSeparator() +
-                    "Expected: same <java.lang.OutOfMemoryError> to be thrown"+lineSeparator()+
-                    "     but: was <java.lang.OutOfMemoryError>", error.getMessage());
-        }
-    }
-
-    @Test
-    public void assertDoesThrowThrowsAssertionFailedErrorIfDifferentExceptionThrown() {
-        try {
-            assertThat(new RuntimeException(), isThrownBy(new Runnable() {
-                @Override
-                public void run() {
-                    throw new NullPointerException();
-                }
-            }));
-            fail("An assertion failed error should have been thrown as no throwable occured");
-        } catch (AssertionError error) {
-            assertEquals(lineSeparator() +
-                    "Expected: same <java.lang.RuntimeException> to be thrown"+lineSeparator()+
-                    "     but: was <java.lang.NullPointerException>", error.getMessage());
-        }
     }
 
     private static class Uninstantiable {

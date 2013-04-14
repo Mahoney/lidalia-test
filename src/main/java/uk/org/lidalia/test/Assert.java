@@ -18,7 +18,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
 import static uk.org.lidalia.test.CombinableMatcher.both;
-import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public final class Assert {
 
@@ -133,35 +132,6 @@ public final class Assert {
             @Override
             protected String featureValueOf(final Throwable actual) {
                 return actual.getMessage();
-            }
-        };
-    }
-
-    public static Matcher<Throwable> isThrownBy(final Runnable workThatShouldThrowThrowable) {
-        return new Matcher<Throwable>() {
-            private Object expectedThrowable;
-            private Object actualThrowable;
-
-            @Override
-            public boolean matches(Object expectedThrowable) {
-                this.expectedThrowable = expectedThrowable;
-                actualThrowable = shouldThrow((Class<? extends Throwable>) expectedThrowable.getClass(), workThatShouldThrowThrowable);
-                return actualThrowable == expectedThrowable;
-            }
-
-            @Override
-            public void describeMismatch(Object item, Description mismatchDescription) {
-                mismatchDescription.appendText("was ").appendValue(actualThrowable);
-            }
-
-            @Override
-            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-                // Deliberately implementing in order to override describeMismatch
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("same ").appendValue(expectedThrowable).appendText(" to be thrown");
             }
         };
     }
