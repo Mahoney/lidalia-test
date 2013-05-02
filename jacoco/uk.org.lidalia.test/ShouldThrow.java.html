@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ShouldThrow.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">ShouldThrow.java</span></div><h1>ShouldThrow.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import com.google.common.base.Optional;
+
+import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
+
+public final class ShouldThrow {
+
+    private static final String INVOKER_INVOCATION_EXCEPTION_CLASSNAME = &quot;org.codehaus.groovy.runtime.InvokerInvocationException&quot;;
+
+    public static &lt;ThrowableType extends Throwable&gt; ThrowableType shouldThrow(
+            final Class&lt;ThrowableType&gt; expectedThrowableType,
+            final Runnable workThatShouldThrowThrowable) {
+<span class="fc" id="L14">        return shouldThrow(expectedThrowableType, Optional.&lt;String&gt;absent(), workThatShouldThrowThrowable);</span>
+    }
+
+    public static &lt;ThrowableType extends Throwable&gt; ThrowableType shouldThrow(
+            final Class&lt;ThrowableType&gt; expectedThrowableType,
+            final String message,
+            final Runnable workThatShouldThrowThrowable) {
+<span class="nc" id="L21">        return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private static &lt;ThrowableType extends Throwable&gt; ThrowableType shouldThrow(
+            final Class&lt;ThrowableType&gt; expectedThrowableType,
+            final Optional&lt;String&gt; message,
+            final Runnable workThatShouldThrowThrowable) {
+        try {
+<span class="fc" id="L30">            workThatShouldThrowThrowable.run();</span>
+<span class="fc" id="L31">            throw new AssertionError(message.or(&quot;No exception thrown&quot;));</span>
+<span class="fc" id="L32">        } catch (final Throwable actualThrowableThrown) { // NOPMD Throwable is thrown if it was not expected</span>
+<span class="fc" id="L33">            final Throwable trueThrowable = extractTrueThrowable(expectedThrowableType, actualThrowableThrown);</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            if (!expectedThrowableType.isInstance(trueThrowable)) {</span>
+<span class="nc" id="L35">                throwUnchecked(actualThrowableThrown);</span>
+            }
+<span class="fc" id="L37">            return (ThrowableType) trueThrowable;</span>
+        }
+    }
+
+    private static &lt;ThrowableType extends Throwable&gt; Throwable extractTrueThrowable(
+            final Class&lt;ThrowableType&gt; expectedThrowableType,
+            final Throwable actualThrowableThrown) {
+        final Throwable trueThrowable;
+<span class="pc bpc" id="L45" title="3 of 4 branches missed.">        if (actualThrowableThrown.getClass().getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)</span>
+                &amp;&amp; !expectedThrowableType.getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)) {
+<span class="nc" id="L47">            trueThrowable = actualThrowableThrown.getCause();</span>
+        } else {
+<span class="fc" id="L49">            trueThrowable = actualThrowableThrown;</span>
+        }
+<span class="fc" id="L51">        return trueThrowable;</span>
+    }
+
+<span class="fc" id="L54">    private ShouldThrow() {</span>
+<span class="fc" id="L55">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Lidalia Test - Checkstyle report</title>
+    <link>http://projects.lidalia.org.uk/lidalia-test</link>
+    <description>Lidalia Test - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2013</copyright>
+    <item>
+      <title>File: 8,
+             Errors: 0,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://projects.lidalia.org.uk/lidalia-test/checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.AllOf.java">uk/org/lidalia/test/AllOf.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.ShouldThrow.java">uk/org/lidalia/test/ShouldThrow.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.CombinableMatcher.java">uk/org/lidalia/test/CombinableMatcher.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.Values.java">uk/org/lidalia/test/Values.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.Assert.java">uk/org/lidalia/test/Assert.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.StaticTimeRule.java">uk/org/lidalia/test/StaticTimeRule.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.SystemOutputRule.java">uk/org/lidalia/test/SystemOutputRule.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://projects.lidalia.org.uk/lidalia-test/checkstyle.html#uk.org.lidalia.test.FeatureMatcher.java">uk/org/lidalia/test/FeatureMatcher.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

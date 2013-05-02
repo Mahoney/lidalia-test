@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Assert.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">Assert.java</span></div><h1>Assert.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
+import java.util.Collection;
+import java.util.List;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
+import uk.org.lidalia.lang.Modifier;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
+import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
+import static uk.org.lidalia.test.CombinableMatcher.both;
+
+public final class Assert {
+
+    public static Matcher&lt;Class&lt;?&gt;&gt; isNotInstantiable() {
+<span class="fc" id="L25">        return both(aClassWhoseSuperClass(is(equalTo(Object.class))))</span>
+                .and(aClassWhoseSetOfConstructors(both(
+                        is(Assert.&lt;List&lt;Constructor&lt;?&gt;&gt;&gt;aCollectionWhoseLength(is(1))))
+                        .and(is(Assert.&lt;List&lt;Constructor&lt;?&gt;&gt;, Constructor&lt;?&gt;&gt;aListWhoseElementAtIndex(0, both(
+                                is(aConstructorWhoseParameterTypes(is(Assert.&lt;List&lt;Class&lt;?&gt;&gt;&gt;aCollectionWhoseLength(is(0))))))
+                                .and(isAMemberWithModifier(Modifier.PRIVATE))
+                                .and(aConstructorWhoseThrownException(both(
+                                        isA(UnsupportedOperationException.class))
+                                        .and(is(aThrowableWhoseMessage(is(&quot;Not instantiable&quot;)))))))))));
+    }
+
+    public static &lt;U, T extends U&gt; FeatureMatcher&lt;Class&lt;? extends T&gt;, Class&lt;? extends U&gt;&gt; aClassWhoseSuperClass(
+            final Matcher&lt;? extends Class&lt;? extends U&gt;&gt; classMatcher) {
+<span class="fc" id="L38">        return new FeatureMatcher&lt;Class&lt;? extends T&gt;, Class&lt;? extends U&gt;&gt;(</span>
+<span class="fc" id="L39">                classMatcher, &quot;a Class whose super class&quot;, &quot;'s super class&quot;) {</span>
+            @Override
+            protected Class&lt;? extends U&gt; featureValueOf(final Class&lt;? extends T&gt; actual) {
+<span class="fc" id="L42">                return (Class&lt;? extends U&gt;) actual.getSuperclass();</span>
+            }
+        };
+    }
+
+    private static FeatureMatcher&lt;Class&lt;?&gt;, List&lt;Constructor&lt;?&gt;&gt;&gt; aClassWhoseSetOfConstructors(
+            final Matcher&lt;List&lt;Constructor&lt;?&gt;&gt;&gt; matcher) {
+<span class="fc" id="L49">        return new FeatureMatcher&lt;Class&lt;?&gt;, List&lt;Constructor&lt;?&gt;&gt;&gt;(</span>
+<span class="fc" id="L50">                matcher, &quot;a Class whose set of constructors&quot;, &quot;'s constructors&quot;) {</span>
+            @Override
+            protected List&lt;Constructor&lt;?&gt;&gt; featureValueOf(final Class&lt;?&gt; actual) {
+<span class="fc" id="L53">                return asList(actual.getDeclaredConstructors());</span>
+            }
+        };
+    }
+
+    public static &lt;T extends Collection&lt;?&gt;&gt; Matcher&lt;T&gt; aCollectionWhoseLength(final Matcher&lt;Integer&gt; integerMatcher) {
+<span class="fc" id="L59">        return new FeatureMatcher&lt;T, Integer&gt;(integerMatcher, &quot;a Collection whose length&quot;, &quot;'s length&quot;) {</span>
+            @Override
+            protected Integer featureValueOf(final T actual) {
+<span class="fc" id="L62">                return actual.size();</span>
+            }
+        };
+    }
+
+    public static &lt;T extends List&lt;? extends E&gt;, E&gt; Matcher&lt;T&gt; aListWhoseElementAtIndex(
+            final Integer index, final Matcher&lt;E&gt; matcher) {
+<span class="fc" id="L69">        return new FeatureMatcher&lt;T, E&gt;(matcher, &quot;a List whose element at index &quot; + index, &quot;'s element at index &quot; + index) {</span>
+            @Override
+            protected E featureValueOf(final T actual) {
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                if (actual.size() &gt; index) {</span>
+<span class="fc" id="L73">                    return actual.get(index);</span>
+                } else {
+<span class="fc" id="L75">                    throw new AssertionError(actual + &quot; has no element at index &quot; + index);</span>
+                }
+            }
+        };
+    }
+
+    public static &lt;T extends Member&gt; Matcher&lt;T&gt; isAMemberWithModifier(final Modifier modifier) {
+<span class="fc" id="L82">        return new TypeSafeDiagnosingMatcher&lt;T&gt;() {</span>
+
+            @Override
+            protected boolean matchesSafely(final T item, final Description mismatchDescription) {
+<span class="fc" id="L86">                final boolean matches = modifier.isTrueOf(item);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                if (!matches) {</span>
+<span class="fc" id="L88">                    mismatchDescription.appendValue(item).appendText(&quot; did not have modifier &quot;).appendValue(modifier);</span>
+                }
+<span class="fc" id="L90">                return matches;</span>
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+<span class="fc" id="L95">                description.appendText(&quot;is a member with modifier &quot; + modifier);</span>
+<span class="fc" id="L96">            }</span>
+        };
+    }
+
+    private static Matcher&lt;Constructor&lt;?&gt;&gt; aConstructorWhoseParameterTypes(final Matcher&lt;List&lt;Class&lt;?&gt;&gt;&gt; parameterMatcher) {
+<span class="fc" id="L101">        return new FeatureMatcher&lt;Constructor&lt;?&gt;, List&lt;Class&lt;?&gt;&gt;&gt;(</span>
+<span class="fc" id="L102">                parameterMatcher, &quot;a constructor whose parameter types&quot;, &quot;'s parameter types&quot;) {</span>
+            @Override
+            protected List&lt;Class&lt;?&gt;&gt; featureValueOf(final Constructor&lt;?&gt; actual) {
+<span class="fc" id="L105">                return asList(actual.getParameterTypes());</span>
+            }
+        };
+    }
+
+    private static Matcher&lt;Constructor&lt;?&gt;&gt; aConstructorWhoseThrownException(final Matcher&lt;? extends Throwable&gt; throwableMatcher) {
+<span class="fc" id="L111">        return new FeatureMatcher&lt;Constructor&lt;?&gt;, Throwable&gt;(</span>
+<span class="fc" id="L112">                throwableMatcher, &quot;a constructor whose thrown exception&quot;, &quot;'s thrown exception&quot;) {</span>
+            @Override
+            protected Throwable featureValueOf(final Constructor&lt;?&gt; constructor) {
+                try {
+<span class="fc" id="L116">                    constructor.setAccessible(true);</span>
+<span class="fc" id="L117">                    constructor.newInstance();</span>
+<span class="fc" id="L118">                    return null;</span>
+<span class="fc" id="L119">                } catch (InvocationTargetException e) {</span>
+<span class="fc" id="L120">                    return e.getCause();</span>
+<span class="nc" id="L121">                } catch (Exception e) {</span>
+<span class="nc" id="L122">                    return throwUnchecked(e, null);</span>
+                } finally {
+<span class="pc" id="L124">                    constructor.setAccessible(false);</span>
+                }
+            }
+        };
+    }
+
+    private static Matcher&lt;Throwable&gt; aThrowableWhoseMessage(final Matcher&lt;String&gt; messageMatcher) {
+<span class="fc" id="L131">        return new FeatureMatcher&lt;Throwable, String&gt;(messageMatcher, &quot;a throwable whose message&quot;, &quot;'s message&quot;) {</span>
+            @Override
+            protected String featureValueOf(final Throwable actual) {
+<span class="fc" id="L134">                return actual.getMessage();</span>
+            }
+        };
+    }
+
+<span class="fc" id="L139">    private Assert() {</span>
+<span class="fc" id="L140">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>
