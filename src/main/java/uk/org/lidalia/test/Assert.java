@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hamcrest.Description;
@@ -50,7 +52,14 @@ public final class Assert {
                 matcher, "a Class whose set of constructors", "'s constructors") {
             @Override
             protected List<Constructor<?>> featureValueOf(final Class<?> actual) {
-                return asList(actual.getDeclaredConstructors());
+                final List<Constructor<?>> constructors = asList(actual.getDeclaredConstructors());
+                Collections.sort(constructors, new Comparator<Constructor<?>>() {
+                    @Override
+                    public int compare(final Constructor<?> one, final Constructor<?> other) {
+                        return one.toString().compareTo(other.toString());
+                    }
+                });
+                return constructors;
             }
         };
     }

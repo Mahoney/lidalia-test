@@ -1,8 +1,5 @@
 package uk.org.lidalia.test;
 
-import java.util.concurrent.Callable;
-
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
