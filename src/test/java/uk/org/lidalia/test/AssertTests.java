@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.lang.Modifier.FINAL;
 import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
-import static uk.org.lidalia.test.Assert.aCollectionWhoseLength;
+import static uk.org.lidalia.test.Assert.aCollectionWhoseSize;
 import static uk.org.lidalia.test.Assert.aListWhoseElementAtIndex;
 import static uk.org.lidalia.test.Assert.isAMemberWithModifier;
 import static uk.org.lidalia.test.Assert.isNotInstantiable;
@@ -51,18 +51,18 @@ public class AssertTests {
     }
 
     @Test public void lengthWithMatchingLength() {
-        assertThat(asList("foo", "bar"), aCollectionWhoseLength(is(2)));
+        assertThat(asList("foo", "bar"), aCollectionWhoseSize(is(2)));
     }
 
     @Test public void lengthWithNonMatchingLength() {
         AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
             public void run() {
-                assertThat(asList("foo", "bar"), is(aCollectionWhoseLength(is(0))));
+                assertThat(asList("foo", "bar"), is(aCollectionWhoseSize(is(0))));
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: is a Collection whose length is <0>\n" +
+                "Expected: is a Collection whose size is <0>\n" +
                 "     but: <[foo, bar]>'s length was <2>"));
     }
 
@@ -122,7 +122,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$Instantiable>'s constructors <[private uk.org.lidalia.test.AssertTests$Instantiable()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$Instantiable()>'s thrown exception was null"));
     }
 
@@ -134,7 +134,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$WrongExceptionType>'s constructors <[private uk.org.lidalia.test.AssertTests$WrongExceptionType()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$WrongExceptionType()>'s thrown exception <java.lang.IllegalArgumentException: Not instantiable> is a java.lang.IllegalArgumentException"));
     }
 
@@ -146,7 +146,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$WrongExceptionMessage>'s constructors <[private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()>'s thrown exception <java.lang.UnsupportedOperationException: other message>'s message was \"other message\""));
     }
 
@@ -158,7 +158,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$PublicConstructor>'s constructors <[public uk.org.lidalia.test.AssertTests$PublicConstructor()]>'s element at index 0 <public uk.org.lidalia.test.AssertTests$PublicConstructor()> did not have modifier <PRIVATE>"));
     }
 
@@ -170,7 +170,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$WrongSuperClass>'s super class was <class java.util.Date>"));
     }
 
@@ -182,7 +182,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$ConstructorWithParam>'s constructors <[private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)]>'s element at index 0 <private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)>'s parameter types <[class java.lang.String]>'s length was <1>"));
     }
 
@@ -194,7 +194,7 @@ public class AssertTests {
             }
         });
         assertThat(expected.getMessage(), is("\n" +
-                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose length is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
+                "Expected: (a Class whose super class is <class java.lang.Object> and a Class whose set of constructors (is a Collection whose size is <1> and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is <0> and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \"Not instantiable\"))))\n" +
                 "     but: <class uk.org.lidalia.test.AssertTests$MultipleConstructors>'s constructors <[private uk.org.lidalia.test.AssertTests$MultipleConstructors(), private uk.org.lidalia.test.AssertTests$MultipleConstructors(java.lang.String)]>'s length was <2>"));
     }
 

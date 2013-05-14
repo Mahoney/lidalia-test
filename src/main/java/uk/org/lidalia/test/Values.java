@@ -5,10 +5,27 @@ import java.util.Random;
 
 import static org.powermock.api.mockito.PowerMockito.mock;
 
+/**
+ * Static utility functions for returning values for testing.
+ */
 public final class Values {
 
     private static final Random RANDOM = new Random();
 
+    /**
+     * Returns a best effort at a unique value for a given type.
+     * <p>
+     * Specifically:
+     * <ul>
+     *     <li>Returns a random value for a primitive type or primitive wrapper type</li>
+     *     <li>Returns a random non-empty String for String</li>
+     *     <li>Returns an array with one element, whose value is set by a recursive call to this function, for an array</li>
+     *     <li>Attempts to return a {@link org.powermock.api.mockito.PowerMockito} mock for any other type</li>
+     * </ul>
+     * @param aClass the class for which a unique value is required
+     * @param <T> the type of the unique value required
+     * @return a unique value of the required type
+     */
     @SuppressWarnings("unchecked")
     public static <T> T uniqueValueFor(final Class<T> aClass) {
         final Object value;

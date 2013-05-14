@@ -7,18 +7,36 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+/**
+ * A <a href="https://github.com/junit-team/junit/wiki">JUnit</a> rule that sets the time returned by the
+ * <a href="http://joda-time.sourceforge.net/">Joda Time</a> classes to a static
+ * time for the duration of the test.
+ * <p>
+ * At the start of each test the time as viewed by Joda Time classes is frozen to the provided time. At the end of the test it
+ * is returned to the system time. This makes time based testing predictable.
+ */
 public class StaticTimeRule implements TestRule {
 
+    /**
+     * @return a static time rule which will freeze the time at the start of the unix epoch
+     */
     public static StaticTimeRule alwaysStartOfEpoch() {
         final Instant startOfEpoch = new Instant(0L);
         return always(startOfEpoch);
     }
 
+    /**
+     * @return a static time rule which will freeze the time at the instant this method was invoked
+     */
     public static StaticTimeRule alwaysNow() {
         final Instant now = new Instant();
         return always(now);
     }
 
+    /**
+     * @param instant the instant at which time will be frozen
+     * @return a static time rule which will freeze the time to the provided instant
+     */
     public static StaticTimeRule always(final ReadableInstant instant) {
         return new StaticTimeRule(instant);
     }
@@ -35,6 +53,9 @@ public class StaticTimeRule implements TestRule {
         return new StaticTimeStatement(base, instant);
     }
 
+    /**
+     * @return the instant at which time is frozen by this rule
+     */
     public ReadableInstant getInstant() {
         return instant;
     }

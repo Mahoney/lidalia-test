@@ -8,6 +8,14 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+/**
+ * A <a href="https://github.com/junit-team/junit/wiki">JUnit</a> rule that facilitates testing code that prints to
+ * {@link System#out} or {@link System#err}.
+ * <p>
+ * At the start of each test the System.out and System.err PrintStreams are replaced with ones that buffer data passed to them in
+ * memory, allowing the test to retrieve the contents of the buffer at any time and assert on it. At the end of the test the
+ * original PrintStreams are restored allowing access to the console again.
+ */
 public class SystemOutputRule implements TestRule {
 
     private final ByteArrayOutputStream sysOut = new ByteArrayOutputStream();
@@ -20,10 +28,16 @@ public class SystemOutputRule implements TestRule {
         return new DebriefableSystemOutputsStatement(base, sysOut, sysErr, originalSysOut, originalSysErr);
     }
 
+    /**
+     * @return the data that has been written to System.out since the test began
+     */
     public String getSystemOut() {
         return sysOut.toString();
     }
 
+    /**
+     * @return the data that has been written to System.err since the test began
+     */
     public String getSystemErr() {
         return sysErr.toString();
     }

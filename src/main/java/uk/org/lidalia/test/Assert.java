@@ -21,20 +21,52 @@ import static org.hamcrest.CoreMatchers.isA;
 import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
 import static uk.org.lidalia.test.CombinableMatcher.both;
 
+/**
+ * Utility Hamcrest matchers for unit test assertions.
+ */
 public final class Assert {
 
+    /**
+     * Asserts that a class is not instantiable - it exists only for its static members.
+     * <p>
+     * More precisely, asserts that the class:
+     * <ul>
+     *     <li>Has Object as its immediate superclass</li>
+     *     <li>Has only one constructor</li>
+     *     <li>That constructor is private</li>
+     *     <li>That constructor takes no arguments</li>
+     *     <li>That constructor will throw an {@link UnsupportedOperationException} with message "Not Instantiable" if it is
+     *     invoked via reflection.</li>
+     * </ul>
+     * <p>
+     * Usage:
+     * {@code assertThat(Values.class, isNotInstantiable());}
+     *
+     * @return a matcher that asserts that a class is not instantiable
+     */
     public static Matcher<Class<?>> isNotInstantiable() {
         return both(aClassWhoseSuperClass(is(equalTo(Object.class))))
                 .and(aClassWhoseSetOfConstructors(both(
-                        is(Assert.<List<Constructor<?>>>aCollectionWhoseLength(is(1))))
+                        is(Assert.<List<Constructor<?>>>aCollectionWhoseSize(is(1))))
                         .and(is(Assert.<List<Constructor<?>>, Constructor<?>>aListWhoseElementAtIndex(0, both(
-                                is(aConstructorWhoseParameterTypes(is(Assert.<List<Class<?>>>aCollectionWhoseLength(is(0))))))
+                                is(aConstructorWhoseParameterTypes(is(Assert.<List<Class<?>>>aCollectionWhoseSize(is(0))))))
                                 .and(isAMemberWithModifier(Modifier.PRIVATE))
                                 .and(aConstructorWhoseThrownException(both(
                                         isA(UnsupportedOperationException.class))
                                         .and(is(aThrowableWhoseMessage(is("Not instantiable")))))))))));
     }
 
+    /**
+     * Facilitates making an assertion about the superclass of a {@link Class}.
+     * <p>
+     * Usage:
+     * {@code assertThat(String.class, is(aClassWhoseSuperClass(is(Object.class))));}
+     *
+     * @param classMatcher the matcher that will be applied to the class's superclass
+     * @param <U> the type of the superclass of the class being matched
+     * @param <T> the type of the class being matched
+     * @return a matcher that will assert something about the superclass of a class
+     */
     public static <U, T extends U> FeatureMatcher<Class<? extends T>, Class<? extends U>> aClassWhoseSuperClass(
             final Matcher<? extends Class<? extends U>> classMatcher) {
         return new FeatureMatcher<Class<? extends T>, Class<? extends U>>(
@@ -64,8 +96,18 @@ public final class Assert {
         };
     }
 
-    public static <T extends Collection<?>> Matcher<T> aCollectionWhoseLength(final Matcher<Integer> integerMatcher) {
-        return new FeatureMatcher<T, Integer>(integerMatcher, "a Collection whose length", "'s length") {
+    /**
+     * Facilitates making an assertion about the size of a {@link Collection}.
+     * <p>
+     * Usage:
+     * {@code assertThat(asList(1, 2, 3), is(aCollectionWhoseSize(is(3))));}
+     *
+     * @param sizeMatcher the matcher that will be applied to the collection's size
+     * @param <T> the type of the collection whose size will be matched
+     * @return a matcher that will assert something about a collection's size
+     */
+    public static <T extends Collection<?>> Matcher<T> aCollectionWhoseSize(final Matcher<Integer> sizeMatcher) {
+        return new FeatureMatcher<T, Integer>(sizeMatcher, "a Collection whose size", "'s length") {
             @Override
             protected Integer featureValueOf(final T actual) {
                 return actual.size();
@@ -73,6 +115,18 @@ public final class Assert {
         };
     }
 
+    /**
+     * Facilitates making an assertion about the element at a given index of a {@link List}.
+     * <p>
+     * Usage:
+     * {@code assertThat(asList("a", "b", "c"), is(aListWhoseElementAtIndex(2, is("c"))));}
+     *
+     * @param index the index of the element in the list the matcher will be applied to
+     * @param matcher the matcher that will be applied to the element
+     * @param <T> the type of the List
+     * @param <E> the type of the elements in the List
+     * @return a matcher that will assert something about the element at the given index of a collection
+     */
     public static <T extends List<? extends E>, E> Matcher<T> aListWhoseElementAtIndex(
             final Integer index, final Matcher<E> matcher) {
         return new FeatureMatcher<T, E>(matcher, "a List whose element at index " + index, "'s element at index " + index) {
@@ -87,6 +141,16 @@ public final class Assert {
         };
     }
 
+    /**
+     * Asserts that a given {@link Member} has a given {@link Modifier}.
+     * <p>
+     * Usage:
+     * {@code assertThat(Object.class.getMethod("toString"), isAMemberWithModifier(Modifier.PUBLIC));}
+     *
+     * @param modifier the modifier the member is expected to have
+     * @param <T> the type of the Member
+     * @return a matcher that will assert a member has a modifier
+     */
     public static <T extends Member> Matcher<T> isAMemberWithModifier(final Modifier modifier) {
         return new TypeSafeDiagnosingMatcher<T>() {
 
