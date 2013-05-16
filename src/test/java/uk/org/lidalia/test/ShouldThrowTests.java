@@ -9,8 +9,6 @@ import static org.junit.Assert.fail;
 import static uk.org.lidalia.test.ShouldThrow.shouldThrow;
 
 public class ShouldThrowTests {
-    public ShouldThrowTests() {
-    }
 
     @Test
     public void shouldThrowReturnsExpectedException() {
