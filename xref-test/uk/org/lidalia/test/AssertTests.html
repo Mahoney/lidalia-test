@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertThat;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.lang.Modifier.FINAL;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.aCollectionWhoseLength;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.aCollectionWhoseSize;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.aListWhoseElementAtIndex;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.isAMemberWithModifier;
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> uk.org.lidalia.test.Assert.isNotInstantiable;
@@ -61,18 +61,18 @@
 <a class="jxr_linenumber" name="51" href="#51">51</a>      }
 <a class="jxr_linenumber" name="52" href="#52">52</a>  
 <a class="jxr_linenumber" name="53" href="#53">53</a>      @Test <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> lengthWithMatchingLength() {
-<a class="jxr_linenumber" name="54" href="#54">54</a>          assertThat(asList(<span class="jxr_string">"foo"</span>, <span class="jxr_string">"bar"</span>), aCollectionWhoseLength(is(2)));
+<a class="jxr_linenumber" name="54" href="#54">54</a>          assertThat(asList(<span class="jxr_string">"foo"</span>, <span class="jxr_string">"bar"</span>), aCollectionWhoseSize(is(2)));
 <a class="jxr_linenumber" name="55" href="#55">55</a>      }
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>      @Test <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> lengthWithNonMatchingLength() {
 <a class="jxr_linenumber" name="58" href="#58">58</a>          AssertionError expected = shouldThrow(AssertionError.<strong class="jxr_keyword">class</strong>, <strong class="jxr_keyword">new</strong> Runnable() {
 <a class="jxr_linenumber" name="59" href="#59">59</a>              @Override
 <a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run() {
-<a class="jxr_linenumber" name="61" href="#61">61</a>                  assertThat(asList(<span class="jxr_string">"foo"</span>, <span class="jxr_string">"bar"</span>), is(aCollectionWhoseLength(is(0))));
+<a class="jxr_linenumber" name="61" href="#61">61</a>                  assertThat(asList(<span class="jxr_string">"foo"</span>, <span class="jxr_string">"bar"</span>), is(aCollectionWhoseSize(is(0))));
 <a class="jxr_linenumber" name="62" href="#62">62</a>              }
 <a class="jxr_linenumber" name="63" href="#63">63</a>          });
 <a class="jxr_linenumber" name="64" href="#64">64</a>          assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="65" href="#65">65</a>                  <span class="jxr_string">"Expected: is a Collection whose length is &lt;0&gt;\n"</span> +
+<a class="jxr_linenumber" name="65" href="#65">65</a>                  <span class="jxr_string">"Expected: is a Collection whose size is &lt;0&gt;\n"</span> +
 <a class="jxr_linenumber" name="66" href="#66">66</a>                  <span class="jxr_string">"     but: &lt;[foo, bar]&gt;'s length was &lt;2&gt;"</span>));
 <a class="jxr_linenumber" name="67" href="#67">67</a>      }
 <a class="jxr_linenumber" name="68" href="#68">68</a>  
@@ -132,7 +132,7 @@
 <a class="jxr_linenumber" name="122" href="#122">122</a>             }
 <a class="jxr_linenumber" name="123" href="#123">123</a>         });
 <a class="jxr_linenumber" name="124" href="#124">124</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="125" href="#125">125</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="125" href="#125">125</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="126" href="#126">126</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$Instantiable&gt;'s constructors &lt;[private uk.org.lidalia.test.AssertTests$Instantiable()]&gt;'s element at index 0 &lt;private uk.org.lidalia.test.AssertTests$Instantiable()&gt;'s thrown exception was null"</span>));
 <a class="jxr_linenumber" name="127" href="#127">127</a>     }
 <a class="jxr_linenumber" name="128" href="#128">128</a> 
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a>             }
 <a class="jxr_linenumber" name="135" href="#135">135</a>         });
 <a class="jxr_linenumber" name="136" href="#136">136</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="137" href="#137">137</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="137" href="#137">137</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="138" href="#138">138</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$WrongExceptionType&gt;'s constructors &lt;[private uk.org.lidalia.test.AssertTests$WrongExceptionType()]&gt;'s element at index 0 &lt;private uk.org.lidalia.test.AssertTests$WrongExceptionType()&gt;'s thrown exception &lt;java.lang.IllegalArgumentException: Not instantiable&gt; is a java.lang.IllegalArgumentException"</span>));
 <a class="jxr_linenumber" name="139" href="#139">139</a>     }
 <a class="jxr_linenumber" name="140" href="#140">140</a> 
@@ -156,7 +156,7 @@
 <a class="jxr_linenumber" name="146" href="#146">146</a>             }
 <a class="jxr_linenumber" name="147" href="#147">147</a>         });
 <a class="jxr_linenumber" name="148" href="#148">148</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="149" href="#149">149</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="149" href="#149">149</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="150" href="#150">150</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$WrongExceptionMessage&gt;'s constructors &lt;[private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()]&gt;'s element at index 0 &lt;private uk.org.lidalia.test.AssertTests$WrongExceptionMessage()&gt;'s thrown exception &lt;java.lang.UnsupportedOperationException: other message&gt;'s message was \&quot;other message\&quot;"</span>));
 <a class="jxr_linenumber" name="151" href="#151">151</a>     }
 <a class="jxr_linenumber" name="152" href="#152">152</a> 
@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="158" href="#158">158</a>             }
 <a class="jxr_linenumber" name="159" href="#159">159</a>         });
 <a class="jxr_linenumber" name="160" href="#160">160</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="161" href="#161">161</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="161" href="#161">161</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="162" href="#162">162</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$PublicConstructor&gt;'s constructors &lt;[public uk.org.lidalia.test.AssertTests$PublicConstructor()]&gt;'s element at index 0 &lt;public uk.org.lidalia.test.AssertTests$PublicConstructor()&gt; did not have modifier &lt;PRIVATE&gt;"</span>));
 <a class="jxr_linenumber" name="163" href="#163">163</a>     }
 <a class="jxr_linenumber" name="164" href="#164">164</a> 
@@ -180,7 +180,7 @@
 <a class="jxr_linenumber" name="170" href="#170">170</a>             }
 <a class="jxr_linenumber" name="171" href="#171">171</a>         });
 <a class="jxr_linenumber" name="172" href="#172">172</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="173" href="#173">173</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="173" href="#173">173</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="174" href="#174">174</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$WrongSuperClass&gt;'s super class was &lt;class java.util.Date&gt;"</span>));
 <a class="jxr_linenumber" name="175" href="#175">175</a>     }
 <a class="jxr_linenumber" name="176" href="#176">176</a> 
@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="182" href="#182">182</a>             }
 <a class="jxr_linenumber" name="183" href="#183">183</a>         });
 <a class="jxr_linenumber" name="184" href="#184">184</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="185" href="#185">185</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="185" href="#185">185</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="186" href="#186">186</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$ConstructorWithParam&gt;'s constructors &lt;[private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)]&gt;'s element at index 0 &lt;private uk.org.lidalia.test.AssertTests$ConstructorWithParam(java.lang.String)&gt;'s parameter types &lt;[class java.lang.String]&gt;'s length was &lt;1&gt;"</span>));
 <a class="jxr_linenumber" name="187" href="#187">187</a>     }
 <a class="jxr_linenumber" name="188" href="#188">188</a> 
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="194" href="#194">194</a>             }
 <a class="jxr_linenumber" name="195" href="#195">195</a>         });
 <a class="jxr_linenumber" name="196" href="#196">196</a>         assertThat(expected.getMessage(), is(<span class="jxr_string">"\n"</span> +
-<a class="jxr_linenumber" name="197" href="#197">197</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose length is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose length is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
+<a class="jxr_linenumber" name="197" href="#197">197</a>                 <span class="jxr_string">"Expected: (a Class whose super class is &lt;class java.lang.Object&gt; and a Class whose set of constructors (is a Collection whose size is &lt;1&gt; and is a List whose element at index 0 ((is a constructor whose parameter types is a Collection whose size is &lt;0&gt; and is a member with modifier PRIVATE) and a constructor whose thrown exception (is an instance of java.lang.UnsupportedOperationException and is a throwable whose message is \&quot;Not instantiable\&quot;))))\n"</span> +
 <a class="jxr_linenumber" name="198" href="#198">198</a>                 <span class="jxr_string">"     but: &lt;class uk.org.lidalia.test.AssertTests$MultipleConstructors&gt;'s constructors &lt;[private uk.org.lidalia.test.AssertTests$MultipleConstructors(), private uk.org.lidalia.test.AssertTests$MultipleConstructors(java.lang.String)]&gt;'s length was &lt;2&gt;"</span>));
 <a class="jxr_linenumber" name="199" href="#199">199</a>     }
 <a class="jxr_linenumber" name="200" href="#200">200</a> 

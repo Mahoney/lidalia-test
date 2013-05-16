@@ -4,21 +4,47 @@ import com.google.common.base.Optional;
 
 import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
 
+/**
+ * Static functions for returning an expected type of Throwable from a block of code for unit testing purposes.
+ */
 public final class ShouldThrow {
 
     private static final String INVOKER_INVOCATION_EXCEPTION_CLASSNAME = &quot;org.codehaus.groovy.runtime.InvokerInvocationException&quot;;
 
+    /**
+     * Asserts that a code block throws a {@link Throwable} of the given type and returns it to permit further assertions on the
+     * Throwable instance returned.
+     *
+     * @param expectedThrowableType the class of the throwable the code block should throw
+     * @param workThatShouldThrowThrowable a code block that ought to throw the expected type when evaluated
+     * @param &lt;ThrowableType&gt; the type of the throwable the code block should throw
+     * @throws AssertionError if no Throwable is thrown at all whilst executing the code block
+     * @throws Throwable any other Throwable thrown by the code block that is not an instance of the expected type
+     * @return the instance of the expected throwable type thrown by the code block, if it was thrown
+     */
     public static &lt;ThrowableType extends Throwable&gt; ThrowableType shouldThrow(
             final Class&lt;ThrowableType&gt; expectedThrowableType,
             final Runnable workThatShouldThrowThrowable) {
-<span class="fc" id="L14">        return shouldThrow(expectedThrowableType, Optional.&lt;String&gt;absent(), workThatShouldThrowThrowable);</span>
+<span class="fc" id="L28">        return shouldThrow(expectedThrowableType, Optional.&lt;String&gt;absent(), workThatShouldThrowThrowable);</span>
     }
 
+    /**
+     * Asserts that a code block throws a {@link Throwable} of the given type and returns it to permit further assertions on the
+     * Throwable instance returned.
+     *
+     * @param expectedThrowableType the class of the throwable the code block should throw
+     * @param message the message to be used as the message of the AssertionError if no throwable is thrown at all
+     * @param workThatShouldThrowThrowable a code block that ought to throw the expected type when evaluated
+     * @param &lt;ThrowableType&gt; the type of the throwable the code block should throw
+     * @throws AssertionError if no Throwable is thrown at all whilst executing the code block
+     * @throws Throwable any other Throwable thrown by the code block that is not an instance of the expected type
+     * @return the instance of the expected throwable type thrown by the code block, if it was thrown
+     */
     public static &lt;ThrowableType extends Throwable&gt; ThrowableType shouldThrow(
             final Class&lt;ThrowableType&gt; expectedThrowableType,
             final String message,
             final Runnable workThatShouldThrowThrowable) {
-<span class="nc" id="L21">        return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);</span>
+<span class="nc" id="L47">        return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);</span>
     }
 
     @SuppressWarnings(&quot;unchecked&quot;)
@@ -27,14 +53,14 @@ public final class ShouldThrow {
             final Optional&lt;String&gt; message,
             final Runnable workThatShouldThrowThrowable) {
         try {
-<span class="fc" id="L30">            workThatShouldThrowThrowable.run();</span>
-<span class="fc" id="L31">            throw new AssertionError(message.or(&quot;No exception thrown&quot;));</span>
-<span class="fc" id="L32">        } catch (final Throwable actualThrowableThrown) { // NOPMD Throwable is thrown if it was not expected</span>
-<span class="fc" id="L33">            final Throwable trueThrowable = extractTrueThrowable(expectedThrowableType, actualThrowableThrown);</span>
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">            if (!expectedThrowableType.isInstance(trueThrowable)) {</span>
-<span class="nc" id="L35">                throwUnchecked(actualThrowableThrown);</span>
+<span class="fc" id="L56">            workThatShouldThrowThrowable.run();</span>
+<span class="fc" id="L57">            throw new AssertionError(message.or(&quot;No exception thrown&quot;));</span>
+<span class="fc" id="L58">        } catch (final Throwable actualThrowableThrown) { // NOPMD Throwable is thrown if it was not expected</span>
+<span class="fc" id="L59">            final Throwable trueThrowable = extractTrueThrowable(expectedThrowableType, actualThrowableThrown);</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (!expectedThrowableType.isInstance(trueThrowable)) {</span>
+<span class="nc" id="L61">                throwUnchecked(actualThrowableThrown);</span>
             }
-<span class="fc" id="L37">            return (ThrowableType) trueThrowable;</span>
+<span class="fc" id="L63">            return (ThrowableType) trueThrowable;</span>
         }
     }
 
@@ -42,17 +68,17 @@ public final class ShouldThrow {
             final Class&lt;ThrowableType&gt; expectedThrowableType,
             final Throwable actualThrowableThrown) {
         final Throwable trueThrowable;
-<span class="pc bpc" id="L45" title="3 of 4 branches missed.">        if (actualThrowableThrown.getClass().getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)</span>
+<span class="pc bpc" id="L71" title="3 of 4 branches missed.">        if (actualThrowableThrown.getClass().getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)</span>
                 &amp;&amp; !expectedThrowableType.getName().equals(INVOKER_INVOCATION_EXCEPTION_CLASSNAME)) {
-<span class="nc" id="L47">            trueThrowable = actualThrowableThrown.getCause();</span>
+<span class="nc" id="L73">            trueThrowable = actualThrowableThrown.getCause();</span>
         } else {
-<span class="fc" id="L49">            trueThrowable = actualThrowableThrown;</span>
+<span class="fc" id="L75">            trueThrowable = actualThrowableThrown;</span>
         }
-<span class="fc" id="L51">        return trueThrowable;</span>
+<span class="fc" id="L77">        return trueThrowable;</span>
     }
 
-<span class="fc" id="L54">    private ShouldThrow() {</span>
-<span class="fc" id="L55">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
+<span class="fc" id="L80">    private ShouldThrow() {</span>
+<span class="fc" id="L81">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>
