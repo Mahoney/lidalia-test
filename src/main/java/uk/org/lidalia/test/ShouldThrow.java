@@ -47,7 +47,7 @@ public final class ShouldThrow {
         return shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.AvoidCatchingThrowable" })
     private static <ThrowableType extends Throwable> ThrowableType shouldThrow(
             final Class<ThrowableType> expectedThrowableType,
             final Optional<String> message,
@@ -55,7 +55,7 @@ public final class ShouldThrow {
         try {
             workThatShouldThrowThrowable.run();
             throw new AssertionError(message.or("No exception thrown"));
-        } catch (final Throwable actualThrowableThrown) { // NOPMD Throwable is thrown if it was not expected
+        } catch (final Throwable actualThrowableThrown) {
             final Throwable trueThrowable = extractTrueThrowable(expectedThrowableType, actualThrowableThrown);
             if (!expectedThrowableType.isInstance(trueThrowable)) {
                 throwUnchecked(actualThrowableThrown);

@@ -23,6 +23,9 @@ public class SystemOutputRule implements TestRule {
     private final PrintStream originalSysOut = System.out;
     private final PrintStream originalSysErr = System.err;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Statement apply(final Statement base, final Description description) {
         return new DebriefableSystemOutputsStatement(base, sysOut, sysErr, originalSysOut, originalSysErr);

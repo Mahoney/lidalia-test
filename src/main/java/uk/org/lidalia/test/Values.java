@@ -8,6 +8,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Static utility functions for returning values for testing.
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public final class Values {
 
     private static final Random RANDOM = new Random();
@@ -26,7 +27,7 @@ public final class Values {
      * @param <T> the type of the unique value required
      * @return a unique value of the required type
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.AvoidUsingShortType", "PMD.CyclomaticComplexity" })
     public static <T> T uniqueValueFor(final Class<T> aClass) {
         final Object value;
         if (isBoolean(aClass)) {
@@ -34,7 +35,7 @@ public final class Values {
         } else if (isByte(aClass)) {
             value = (byte) RANDOM.nextInt();
         } else if (isShort(aClass)) {
-            value = (short) RANDOM.nextInt(); // NOPMD have to support short
+            value = (short) RANDOM.nextInt();
         } else if (isChar(aClass)) {
             value = (char) RANDOM.nextInt();
         } else if (isInt(aClass)) {
@@ -64,8 +65,9 @@ public final class Values {
         return aClass == char.class || aClass == Character.class;
     }
 
+    @SuppressWarnings("PMD.AvoidUsingShortType")
     private static boolean isShort(final Class<?> aClass) {
-        return aClass == short.class || aClass == Short.class; // NOPMD have to support short
+        return aClass == short.class || aClass == Short.class;
     }
 
     private static boolean isByte(final Class<?> aClass) {
