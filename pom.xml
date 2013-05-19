@@ -71,4 +71,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links combine.children="append">
+            <link>http://projects.lidalia.org.uk/lidalia-lang/apidocs/</link>
+          </links>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
