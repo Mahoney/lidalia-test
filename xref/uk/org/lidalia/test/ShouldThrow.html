@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">return</strong> shouldThrow(expectedThrowableType, Optional.of(message), workThatShouldThrowThrowable);
 <a class="jxr_linenumber" name="48" href="#48">48</a>      }
 <a class="jxr_linenumber" name="49" href="#49">49</a>  
-<a class="jxr_linenumber" name="50" href="#50">50</a>      @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="50" href="#50">50</a>      @SuppressWarnings({ <span class="jxr_string">"unchecked"</span>, <span class="jxr_string">"PMD.AvoidCatchingThrowable"</span> })
 <a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> &lt;ThrowableType <strong class="jxr_keyword">extends</strong> Throwable&gt; ThrowableType shouldThrow(
 <a class="jxr_linenumber" name="52" href="#52">52</a>              <strong class="jxr_keyword">final</strong> Class&lt;ThrowableType&gt; expectedThrowableType,
 <a class="jxr_linenumber" name="53" href="#53">53</a>              <strong class="jxr_keyword">final</strong> Optional&lt;String&gt; message,
@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="55" href="#55">55</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="56" href="#56">56</a>              workThatShouldThrowThrowable.run();
 <a class="jxr_linenumber" name="57" href="#57">57</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> AssertionError(message.or(<span class="jxr_string">"No exception thrown"</span>));
-<a class="jxr_linenumber" name="58" href="#58">58</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable actualThrowableThrown) { <em class="jxr_comment">// NOPMD Throwable is thrown if it was not expected</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Throwable actualThrowableThrown) {
 <a class="jxr_linenumber" name="59" href="#59">59</a>              <strong class="jxr_keyword">final</strong> Throwable trueThrowable = extractTrueThrowable(expectedThrowableType, actualThrowableThrown);
 <a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">if</strong> (!expectedThrowableType.isInstance(trueThrowable)) {
 <a class="jxr_linenumber" name="61" href="#61">61</a>                  throwUnchecked(actualThrowableThrown);

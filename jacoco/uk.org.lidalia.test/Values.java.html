@@ -8,9 +8,10 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 /**
  * Static utility functions for returning values for testing.
  */
+@SuppressWarnings(&quot;PMD.CyclomaticComplexity&quot;)
 public final class Values {
 
-<span class="fc" id="L13">    private static final Random RANDOM = new Random();</span>
+<span class="fc" id="L14">    private static final Random RANDOM = new Random();</span>
 
     /**
      * Returns a best effort at a unique value for a given type.
@@ -26,70 +27,71 @@ public final class Values {
      * @param &lt;T&gt; the type of the unique value required
      * @return a unique value of the required type
      */
-    @SuppressWarnings(&quot;unchecked&quot;)
+    @SuppressWarnings({ &quot;unchecked&quot;, &quot;PMD.AvoidUsingShortType&quot;, &quot;PMD.CyclomaticComplexity&quot; })
     public static &lt;T&gt; T uniqueValueFor(final Class&lt;T&gt; aClass) {
         final Object value;
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (isBoolean(aClass)) {</span>
-<span class="fc" id="L33">            value = RANDOM.nextBoolean();</span>
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        } else if (isByte(aClass)) {</span>
-<span class="fc" id="L35">            value = (byte) RANDOM.nextInt();</span>
-<span class="fc bfc" id="L36" title="All 2 branches covered.">        } else if (isShort(aClass)) {</span>
-<span class="fc" id="L37">            value = (short) RANDOM.nextInt(); // NOPMD have to support short</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        } else if (isChar(aClass)) {</span>
-<span class="fc" id="L39">            value = (char) RANDOM.nextInt();</span>
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        } else if (isInt(aClass)) {</span>
-<span class="fc" id="L41">            value = RANDOM.nextInt();</span>
-<span class="fc bfc" id="L42" title="All 2 branches covered.">        } else if (isLong(aClass)) {</span>
-<span class="fc" id="L43">            value = RANDOM.nextLong();</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        } else if (isFloat(aClass)) {</span>
-<span class="fc" id="L45">            value = RANDOM.nextFloat();</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        } else if (isDouble(aClass)) {</span>
-<span class="fc" id="L47">            value = RANDOM.nextDouble();</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        } else if (aClass == String.class) {</span>
-<span class="fc" id="L49">            value = String.valueOf(RANDOM.nextLong());</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        } else if (aClass.isArray()) {</span>
-<span class="fc" id="L51">            value = Array.newInstance(aClass.getComponentType(), 1);</span>
-<span class="fc" id="L52">            Array.set(value, 0, uniqueValueFor(aClass.getComponentType()));</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (isBoolean(aClass)) {</span>
+<span class="fc" id="L34">            value = RANDOM.nextBoolean();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        } else if (isByte(aClass)) {</span>
+<span class="fc" id="L36">            value = (byte) RANDOM.nextInt();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        } else if (isShort(aClass)) {</span>
+<span class="fc" id="L38">            value = (short) RANDOM.nextInt();</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        } else if (isChar(aClass)) {</span>
+<span class="fc" id="L40">            value = (char) RANDOM.nextInt();</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        } else if (isInt(aClass)) {</span>
+<span class="fc" id="L42">            value = RANDOM.nextInt();</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        } else if (isLong(aClass)) {</span>
+<span class="fc" id="L44">            value = RANDOM.nextLong();</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        } else if (isFloat(aClass)) {</span>
+<span class="fc" id="L46">            value = RANDOM.nextFloat();</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        } else if (isDouble(aClass)) {</span>
+<span class="fc" id="L48">            value = RANDOM.nextDouble();</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        } else if (aClass == String.class) {</span>
+<span class="fc" id="L50">            value = String.valueOf(RANDOM.nextLong());</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        } else if (aClass.isArray()) {</span>
+<span class="fc" id="L52">            value = Array.newInstance(aClass.getComponentType(), 1);</span>
+<span class="fc" id="L53">            Array.set(value, 0, uniqueValueFor(aClass.getComponentType()));</span>
         } else {
-<span class="fc" id="L54">            value = mock(aClass);</span>
+<span class="fc" id="L55">            value = mock(aClass);</span>
         }
-<span class="fc" id="L56">        return (T) value;</span>
+<span class="fc" id="L57">        return (T) value;</span>
     }
 
     private static boolean isInt(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L60" title="All 4 branches covered.">        return aClass == int.class || aClass == Integer.class;</span>
+<span class="fc bfc" id="L61" title="All 4 branches covered.">        return aClass == int.class || aClass == Integer.class;</span>
     }
 
     private static boolean isChar(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L64" title="All 4 branches covered.">        return aClass == char.class || aClass == Character.class;</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">        return aClass == char.class || aClass == Character.class;</span>
     }
 
+    @SuppressWarnings(&quot;PMD.AvoidUsingShortType&quot;)
     private static boolean isShort(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L68" title="All 4 branches covered.">        return aClass == short.class || aClass == Short.class; // NOPMD have to support short</span>
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        return aClass == short.class || aClass == Short.class;</span>
     }
 
     private static boolean isByte(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L72" title="All 4 branches covered.">        return aClass == byte.class || aClass == Byte.class;</span>
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        return aClass == byte.class || aClass == Byte.class;</span>
     }
 
     private static boolean isDouble(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L76" title="All 4 branches covered.">        return aClass == double.class || aClass == Double.class;</span>
+<span class="fc bfc" id="L78" title="All 4 branches covered.">        return aClass == double.class || aClass == Double.class;</span>
     }
 
     private static boolean isFloat(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L80" title="All 4 branches covered.">        return aClass == float.class || aClass == Float.class;</span>
+<span class="fc bfc" id="L82" title="All 4 branches covered.">        return aClass == float.class || aClass == Float.class;</span>
     }
 
     private static boolean isBoolean(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L84" title="All 4 branches covered.">        return aClass == boolean.class || aClass == Boolean.class;</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">        return aClass == boolean.class || aClass == Boolean.class;</span>
     }
 
     private static boolean isLong(final Class&lt;?&gt; aClass) {
-<span class="fc bfc" id="L88" title="All 4 branches covered.">        return aClass == long.class || aClass == Long.class;</span>
+<span class="fc bfc" id="L90" title="All 4 branches covered.">        return aClass == long.class || aClass == Long.class;</span>
     }
 
-<span class="fc" id="L91">    private Values() {</span>
-<span class="fc" id="L92">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
+<span class="fc" id="L93">    private Values() {</span>
+<span class="fc" id="L94">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

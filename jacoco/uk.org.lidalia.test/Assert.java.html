@@ -156,7 +156,7 @@ public final class Assert {
 
             @Override
             protected boolean matchesSafely(final T item, final Description mismatchDescription) {
-<span class="fc" id="L159">                final boolean matches = modifier.isTrueOf(item);</span>
+<span class="fc" id="L159">                final boolean matches = modifier.existsOn(item);</span>
 <span class="fc bfc" id="L160" title="All 2 branches covered.">                if (!matches) {</span>
 <span class="fc" id="L161">                    mismatchDescription.appendValue(item).appendText(&quot; did not have modifier &quot;).appendValue(modifier);</span>
                 }
