@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>StaticTimeRule.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">StaticTimeRule.java</span></div><h1>StaticTimeRule.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import org.joda.time.DateTimeUtils;
+import org.joda.time.Instant;
+import org.joda.time.ReadableInstant;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
+/**
+ * A &lt;a href=&quot;https://github.com/junit-team/junit/wiki&quot;&gt;JUnit&lt;/a&gt; rule that sets the time returned by the
+ * &lt;a href=&quot;http://joda-time.sourceforge.net/&quot;&gt;Joda Time&lt;/a&gt; classes to a static
+ * time for the duration of the test.
+ * &lt;p&gt;
+ * At the start of each test the time as viewed by Joda Time classes is frozen to the provided time. At the end of the test it
+ * is returned to the system time. This makes time based testing predictable.
+ */
+public class StaticTimeRule implements TestRule {
+
+    /**
+     * @return a static time rule which will freeze the time at the start of the unix epoch
+     */
+    public static StaticTimeRule alwaysStartOfEpoch() {
+<span class="fc" id="L24">        final Instant startOfEpoch = new Instant(0L);</span>
+<span class="fc" id="L25">        return always(startOfEpoch);</span>
+    }
+
+    /**
+     * @return a static time rule which will freeze the time at the instant this method was invoked
+     */
+    public static StaticTimeRule alwaysNow() {
+<span class="fc" id="L32">        final Instant now = new Instant();</span>
+<span class="fc" id="L33">        return always(now);</span>
+    }
+
+    /**
+     * @param instant the instant at which time will be frozen
+     * @return a static time rule which will freeze the time to the provided instant
+     */
+    public static StaticTimeRule always(final ReadableInstant instant) {
+<span class="fc" id="L41">        return new StaticTimeRule(instant);</span>
+    }
+
+    private final ReadableInstant instant;
+
+    private StaticTimeRule(final ReadableInstant instant) {
+<span class="fc" id="L47">        super();</span>
+<span class="fc" id="L48">        this.instant = instant;</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public Statement apply(final Statement base, final Description description) {
+<span class="fc" id="L53">        return new StaticTimeStatement(base, instant);</span>
+    }
+
+    /**
+     * @return the instant at which time is frozen by this rule
+     */
+    public ReadableInstant getInstant() {
+<span class="fc" id="L60">        return instant;</span>
+    }
+
+    private static class StaticTimeStatement extends Statement {
+        private final Statement base;
+        private final ReadableInstant instant;
+
+        public StaticTimeStatement(final Statement base, final ReadableInstant instant) {
+<span class="fc" id="L68">            super();</span>
+<span class="fc" id="L69">            this.base = base;</span>
+<span class="fc" id="L70">            this.instant = instant;</span>
+<span class="fc" id="L71">        }</span>
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+<span class="fc" id="L76">                DateTimeUtils.setCurrentMillisFixed(instant.getMillis());</span>
+<span class="fc" id="L77">                base.evaluate();</span>
+            } finally {
+<span class="fc" id="L79">                DateTimeUtils.setCurrentMillisSystem();</span>
+<span class="fc" id="L80">            }</span>
+<span class="fc" id="L81">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

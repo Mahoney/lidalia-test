@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CombinableMatcher.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">CombinableMatcher.java</span></div><h1>CombinableMatcher.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Description;
+import org.hamcrest.Factory;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
+class CombinableMatcher&lt;T&gt; extends TypeSafeDiagnosingMatcher&lt;T&gt; {
+    private final Matcher&lt;? super T&gt; matcher;
+
+    CombinableMatcher(final Matcher&lt;? super T&gt; matcher) {
+<span class="fc" id="L15">        super();</span>
+<span class="fc" id="L16">        this.matcher = matcher;</span>
+<span class="fc" id="L17">    }</span>
+
+    @Override
+    protected boolean matchesSafely(final T item, final Description mismatch) {
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (!matcher.matches(item)) {</span>
+<span class="fc" id="L22">            matcher.describeMismatch(item, mismatch);</span>
+<span class="fc" id="L23">            return false;</span>
+        }
+<span class="fc" id="L25">        return true;</span>
+    }
+
+    @Override
+    public void describeTo(final Description description) {
+<span class="fc" id="L30">        description.appendDescriptionOf(matcher);</span>
+<span class="fc" id="L31">    }</span>
+
+    CombinableMatcher&lt;T&gt; and(final Matcher&lt;? super T&gt; other) {
+<span class="fc" id="L34">        return new CombinableMatcher&lt;&gt;(new AllOf&lt;&gt;(templatedListWith(other)));</span>
+    }
+
+    private List&lt;Matcher&lt;? super T&gt;&gt; templatedListWith(final Matcher&lt;? super T&gt; other) {
+<span class="fc" id="L38">        final List&lt;Matcher&lt;? super T&gt;&gt; matchers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L39">        matchers.add(matcher);</span>
+<span class="fc" id="L40">        matchers.add(other);</span>
+<span class="fc" id="L41">        return matchers;</span>
+    }
+
+    /**
+     * Creates a matcher that matches when both of the specified matchers match the examined object.
+     * &lt;p/&gt;
+     * For example:
+     * &lt;pre&gt;assertThat(&quot;fab&quot;, both(containsString(&quot;a&quot;)).and(containsString(&quot;b&quot;)))&lt;/pre&gt;
+     */
+    @Factory
+    static &lt;LHS&gt; CombinableMatcher&lt;LHS&gt; both(final Matcher&lt;? super LHS&gt; matcher) {
+<span class="fc" id="L52">        return new CombinableMatcher&lt;&gt;(matcher);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Assert.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">Assert.java</span></div><h1>Assert.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
+import uk.org.lidalia.lang.Modifier;
+
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.isA;
+import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
+import static uk.org.lidalia.test.CombinableMatcher.both;
+
+/**
+ * Utility Hamcrest matchers for unit test assertions.
+ */
+public final class Assert {
+
+    /**
+     * Asserts that a class is not instantiable - it exists only for its static members.
+     * &lt;p&gt;
+     * More precisely, asserts that the class:
+     * &lt;ul&gt;
+     *     &lt;li&gt;Has Object as its immediate superclass&lt;/li&gt;
+     *     &lt;li&gt;Has only one constructor&lt;/li&gt;
+     *     &lt;li&gt;That constructor is private&lt;/li&gt;
+     *     &lt;li&gt;That constructor takes no arguments&lt;/li&gt;
+     *     &lt;li&gt;That constructor will throw an {@link UnsupportedOperationException} with message &quot;Not Instantiable&quot; if it is
+     *     invoked via reflection.&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * Usage:
+     * {@code assertThat(Values.class, isNotInstantiable());}
+     *
+     * @return a matcher that asserts that a class is not instantiable
+     */
+    public static Matcher&lt;Class&lt;?&gt;&gt; isNotInstantiable() {
+<span class="fc" id="L48">        return both(aClassWhoseSuperClass(is(equalTo(Object.class))))</span>
+                .and(aClassWhoseSetOfConstructors(both(
+                        is(Assert.&lt;List&lt;Constructor&lt;?&gt;&gt;&gt;aCollectionWhoseSize(is(1))))
+                        .and(is(Assert.&lt;List&lt;Constructor&lt;?&gt;&gt;, Constructor&lt;?&gt;&gt;aListWhoseElementAtIndex(0, both(
+                                is(aConstructorWhoseParameterTypes(is(Assert.&lt;List&lt;Class&lt;?&gt;&gt;&gt;aCollectionWhoseSize(is(0))))))
+                                .and(isAMemberWithModifier(Modifier.PRIVATE))
+                                .and(aConstructorWhoseThrownException(both(
+                                        isA(UnsupportedOperationException.class))
+                                        .and(is(aThrowableWhoseMessage(is(&quot;Not instantiable&quot;)))))))))));
+    }
+
+    /**
+     * Facilitates making an assertion about the superclass of a {@link Class}.
+     * &lt;p&gt;
+     * Usage:
+     * {@code assertThat(String.class, is(aClassWhoseSuperClass(is(Object.class))));}
+     *
+     * @param classMatcher the matcher that will be applied to the class's superclass
+     * @param &lt;U&gt; the type of the superclass of the class being matched
+     * @param &lt;T&gt; the type of the class being matched
+     * @return a matcher that will assert something about the superclass of a class
+     */
+    public static &lt;U, T extends U&gt; FeatureMatcher&lt;Class&lt;? extends T&gt;, Class&lt;? extends U&gt;&gt; aClassWhoseSuperClass(
+            final Matcher&lt;? extends Class&lt;? extends U&gt;&gt; classMatcher) {
+<span class="fc" id="L72">        return new FeatureMatcher&lt;Class&lt;? extends T&gt;, Class&lt;? extends U&gt;&gt;(</span>
+<span class="fc" id="L73">                classMatcher, &quot;a Class whose super class&quot;, &quot;'s super class&quot;) {</span>
+            @Override
+            protected Class&lt;? extends U&gt; featureValueOf(final Class&lt;? extends T&gt; actual) {
+<span class="fc" id="L76">                return (Class&lt;? extends U&gt;) actual.getSuperclass();</span>
+            }
+        };
+    }
+
+    private static FeatureMatcher&lt;Class&lt;?&gt;, List&lt;Constructor&lt;?&gt;&gt;&gt; aClassWhoseSetOfConstructors(
+            final Matcher&lt;List&lt;Constructor&lt;?&gt;&gt;&gt; matcher) {
+<span class="fc" id="L83">        return new FeatureMatcher&lt;Class&lt;?&gt;, List&lt;Constructor&lt;?&gt;&gt;&gt;(</span>
+<span class="fc" id="L84">                matcher, &quot;a Class whose set of constructors&quot;, &quot;'s constructors&quot;) {</span>
+            @Override
+            protected List&lt;Constructor&lt;?&gt;&gt; featureValueOf(final Class&lt;?&gt; actual) {
+<span class="fc" id="L87">                final List&lt;Constructor&lt;?&gt;&gt; constructors = asList(actual.getDeclaredConstructors());</span>
+<span class="fc" id="L88">                Collections.sort(constructors, new Comparator&lt;Constructor&lt;?&gt;&gt;() {</span>
+                    @Override
+                    public int compare(final Constructor&lt;?&gt; one, final Constructor&lt;?&gt; other) {
+<span class="fc" id="L91">                        return one.toString().compareTo(other.toString());</span>
+                    }
+                });
+<span class="fc" id="L94">                return constructors;</span>
+            }
+        };
+    }
+
+    /**
+     * Facilitates making an assertion about the size of a {@link Collection}.
+     * &lt;p&gt;
+     * Usage:
+     * {@code assertThat(asList(1, 2, 3), is(aCollectionWhoseSize(is(3))));}
+     *
+     * @param sizeMatcher the matcher that will be applied to the collection's size
+     * @param &lt;T&gt; the type of the collection whose size will be matched
+     * @return a matcher that will assert something about a collection's size
+     */
+    public static &lt;T extends Collection&lt;?&gt;&gt; Matcher&lt;T&gt; aCollectionWhoseSize(final Matcher&lt;Integer&gt; sizeMatcher) {
+<span class="fc" id="L110">        return new FeatureMatcher&lt;T, Integer&gt;(sizeMatcher, &quot;a Collection whose size&quot;, &quot;'s length&quot;) {</span>
+            @Override
+            protected Integer featureValueOf(final T actual) {
+<span class="fc" id="L113">                return actual.size();</span>
+            }
+        };
+    }
+
+    /**
+     * Facilitates making an assertion about the element at a given index of a {@link List}.
+     * &lt;p&gt;
+     * Usage:
+     * {@code assertThat(asList(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;), is(aListWhoseElementAtIndex(2, is(&quot;c&quot;))));}
+     *
+     * @param index the index of the element in the list the matcher will be applied to
+     * @param matcher the matcher that will be applied to the element
+     * @param &lt;T&gt; the type of the List
+     * @param &lt;E&gt; the type of the elements in the List
+     * @return a matcher that will assert something about the element at the given index of a collection
+     */
+    public static &lt;T extends List&lt;? extends E&gt;, E&gt; Matcher&lt;T&gt; aListWhoseElementAtIndex(
+            final Integer index, final Matcher&lt;E&gt; matcher) {
+<span class="fc" id="L132">        return new FeatureMatcher&lt;T, E&gt;(matcher, &quot;a List whose element at index &quot; + index, &quot;'s element at index &quot; + index) {</span>
+            @Override
+            protected E featureValueOf(final T actual) {
+<span class="fc bfc" id="L135" title="All 2 branches covered.">                if (actual.size() &gt; index) {</span>
+<span class="fc" id="L136">                    return actual.get(index);</span>
+                } else {
+<span class="fc" id="L138">                    throw new AssertionError(actual + &quot; has no element at index &quot; + index);</span>
+                }
+            }
+        };
+    }
+
+    /**
+     * Asserts that a given {@link Member} has a given {@link Modifier}.
+     * &lt;p&gt;
+     * Usage:
+     * {@code assertThat(Object.class.getMethod(&quot;toString&quot;), isAMemberWithModifier(Modifier.PUBLIC));}
+     *
+     * @param modifier the modifier the member is expected to have
+     * @param &lt;T&gt; the type of the Member
+     * @return a matcher that will assert a member has a modifier
+     */
+    public static &lt;T extends Member&gt; Matcher&lt;T&gt; isAMemberWithModifier(final Modifier modifier) {
+<span class="fc" id="L155">        return new TypeSafeDiagnosingMatcher&lt;T&gt;() {</span>
+
+            @Override
+            protected boolean matchesSafely(final T item, final Description mismatchDescription) {
+<span class="fc" id="L159">                final boolean matches = modifier.existsOn(item);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                if (!matches) {</span>
+<span class="fc" id="L161">                    mismatchDescription.appendValue(item).appendText(&quot; did not have modifier &quot;).appendValue(modifier);</span>
+                }
+<span class="fc" id="L163">                return matches;</span>
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+<span class="fc" id="L168">                description.appendText(&quot;is a member with modifier &quot; + modifier);</span>
+<span class="fc" id="L169">            }</span>
+        };
+    }
+
+    private static Matcher&lt;Constructor&lt;?&gt;&gt; aConstructorWhoseParameterTypes(final Matcher&lt;List&lt;Class&lt;?&gt;&gt;&gt; parameterMatcher) {
+<span class="fc" id="L174">        return new FeatureMatcher&lt;Constructor&lt;?&gt;, List&lt;Class&lt;?&gt;&gt;&gt;(</span>
+<span class="fc" id="L175">                parameterMatcher, &quot;a constructor whose parameter types&quot;, &quot;'s parameter types&quot;) {</span>
+            @Override
+            protected List&lt;Class&lt;?&gt;&gt; featureValueOf(final Constructor&lt;?&gt; actual) {
+<span class="fc" id="L178">                return asList(actual.getParameterTypes());</span>
+            }
+        };
+    }
+
+    private static Matcher&lt;Constructor&lt;?&gt;&gt; aConstructorWhoseThrownException(final Matcher&lt;? extends Throwable&gt; throwableMatcher) {
+<span class="fc" id="L184">        return new FeatureMatcher&lt;Constructor&lt;?&gt;, Throwable&gt;(</span>
+<span class="fc" id="L185">                throwableMatcher, &quot;a constructor whose thrown exception&quot;, &quot;'s thrown exception&quot;) {</span>
+            @Override
+            protected Throwable featureValueOf(final Constructor&lt;?&gt; constructor) {
+                try {
+<span class="fc" id="L189">                    constructor.setAccessible(true);</span>
+<span class="fc" id="L190">                    constructor.newInstance();</span>
+<span class="fc" id="L191">                    return null;</span>
+<span class="fc" id="L192">                } catch (InvocationTargetException e) {</span>
+<span class="fc" id="L193">                    return e.getCause();</span>
+<span class="nc" id="L194">                } catch (Exception e) {</span>
+<span class="nc" id="L195">                    return throwUnchecked(e, null);</span>
+                } finally {
+<span class="pc" id="L197">                    constructor.setAccessible(false);</span>
+                }
+            }
+        };
+    }
+
+    private static Matcher&lt;Throwable&gt; aThrowableWhoseMessage(final Matcher&lt;String&gt; messageMatcher) {
+<span class="fc" id="L204">        return new FeatureMatcher&lt;Throwable, String&gt;(messageMatcher, &quot;a throwable whose message&quot;, &quot;'s message&quot;) {</span>
+            @Override
+            protected String featureValueOf(final Throwable actual) {
+<span class="fc" id="L207">                return actual.getMessage();</span>
+            }
+        };
+    }
+
+<span class="fc" id="L212">    private Assert() {</span>
+<span class="fc" id="L213">        throw new UnsupportedOperationException(&quot;Not instantiable&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

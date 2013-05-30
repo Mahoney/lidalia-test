@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SystemOutputRule.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">SystemOutputRule.java</span></div><h1>SystemOutputRule.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
+
+/**
+ * A &lt;a href=&quot;https://github.com/junit-team/junit/wiki&quot;&gt;JUnit&lt;/a&gt; rule that facilitates testing code that prints to
+ * {@link System#out} or {@link System#err}.
+ * &lt;p&gt;
+ * At the start of each test the System.out and System.err PrintStreams are replaced with ones that buffer data passed to them in
+ * memory, allowing the test to retrieve the contents of the buffer at any time and assert on it. At the end of the test the
+ * original PrintStreams are restored allowing access to the console again.
+ */
+<span class="fc" id="L19">public class SystemOutputRule implements TestRule {</span>
+
+<span class="fc" id="L21">    private final ByteArrayOutputStream sysOut = new ByteArrayOutputStream();</span>
+<span class="fc" id="L22">    private final ByteArrayOutputStream sysErr = new ByteArrayOutputStream();</span>
+<span class="fc" id="L23">    private final PrintStream originalSysOut = System.out;</span>
+<span class="fc" id="L24">    private final PrintStream originalSysErr = System.err;</span>
+
+    @Override
+    public Statement apply(final Statement base, final Description description) {
+<span class="fc" id="L28">        return new DebriefableSystemOutputsStatement(base, sysOut, sysErr, originalSysOut, originalSysErr);</span>
+    }
+
+    /**
+     * @return the data that has been written to System.out since the test began
+     */
+    public String getSystemOut() {
+<span class="fc" id="L35">        return sysOut.toString();</span>
+    }
+
+    /**
+     * @return the data that has been written to System.err since the test began
+     */
+    public String getSystemErr() {
+<span class="fc" id="L42">        return sysErr.toString();</span>
+    }
+
+<span class="fc" id="L45">    private static class DebriefableSystemOutputsStatement extends Statement {</span>
+        private final Statement base;
+        private final OutputStream sysOut;
+        private final OutputStream sysErr;
+        private final PrintStream originalSysOut;
+        private final PrintStream originalSysErr;
+
+        public DebriefableSystemOutputsStatement(final Statement base, final OutputStream sysOut, final OutputStream sysErr,
+                                                 final PrintStream originalSysOut, final PrintStream originalSysErr) {
+<span class="fc" id="L54">            super();</span>
+<span class="fc" id="L55">            this.base = base;</span>
+<span class="fc" id="L56">            this.sysOut = sysOut;</span>
+<span class="fc" id="L57">            this.sysErr = sysErr;</span>
+<span class="fc" id="L58">            this.originalSysOut = originalSysOut;</span>
+<span class="fc" id="L59">            this.originalSysErr = originalSysErr;</span>
+<span class="fc" id="L60">        }</span>
+
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+<span class="fc" id="L65">                System.setOut(new PrintStream(sysOut));</span>
+<span class="fc" id="L66">                System.setErr(new PrintStream(sysErr));</span>
+<span class="fc" id="L67">                base.evaluate();</span>
+            } finally {
+<span class="fc" id="L69">                System.setOut(originalSysOut);</span>
+<span class="fc" id="L70">                System.setErr(originalSysErr);</span>
+<span class="fc" id="L71">            }</span>
+<span class="fc" id="L72">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>

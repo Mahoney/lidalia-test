@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FeatureMatcher.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Lidalia Test</a> &gt; <a href="index.html" class="el_package">uk.org.lidalia.test</a> &gt; <span class="el_source">FeatureMatcher.java</span></div><h1>FeatureMatcher.java</h1><pre class="source lang-java linenums">package uk.org.lidalia.test;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hamcrest.internal.ReflectiveTypeFinder;
+
+/**
+ * Supporting class for matching a feature of an object. Implement &lt;code&gt;featureValueOf()&lt;/code&gt;
+ * in a subclass to pull out the feature to be matched against.
+ *
+ * @param &lt;T&gt; The type of the object to be matched
+ * @param &lt;U&gt; The type of the feature to be matched
+ */
+abstract class FeatureMatcher&lt;T, U&gt; extends TypeSafeDiagnosingMatcher&lt;T&gt; {
+<span class="fc" id="L16">    private static final ReflectiveTypeFinder TYPE_FINDER = new ReflectiveTypeFinder(&quot;featureValueOf&quot;, 1, 0);</span>
+    private final Matcher&lt;? extends U&gt; subMatcher;
+    private final String featureDescription;
+    private final String featureName;
+
+    /**
+     * @param subMatcher         The matcher to apply to the feature
+     * @param featureDescription Descriptive text to use in describeTo
+     * @param featureName        Identifying text for mismatch message
+     */
+    FeatureMatcher(final Matcher&lt;? extends U&gt; subMatcher, final String featureDescription, final String featureName) {
+<span class="fc" id="L27">        super(TYPE_FINDER);</span>
+<span class="fc" id="L28">        this.subMatcher = subMatcher;</span>
+<span class="fc" id="L29">        this.featureDescription = featureDescription;</span>
+<span class="fc" id="L30">        this.featureName = featureName;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Implement this to extract the interesting feature.
+     *
+     * @param actual the target object
+     * @return the feature to be matched
+     */
+    protected abstract U featureValueOf(T actual);
+
+    @Override
+    protected boolean matchesSafely(final T actual, final Description mismatch) {
+<span class="fc" id="L43">        final U featureValue = featureValueOf(actual);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (!subMatcher.matches(featureValue)) {</span>
+<span class="fc" id="L45">            mismatch.appendValue(actual).appendText(featureName).appendText(&quot; &quot;);</span>
+<span class="fc" id="L46">            subMatcher.describeMismatch(featureValue, mismatch);</span>
+<span class="fc" id="L47">            return false;</span>
+        }
+<span class="fc" id="L49">        return true;</span>
+    }
+
+    @Override
+    public final void describeTo(final Description description) {
+<span class="fc" id="L54">        description.appendText(featureDescription).appendText(&quot; &quot;)</span>
+                .appendDescriptionOf(subMatcher);
+<span class="fc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.2.201302030002</span></div></body></html>
