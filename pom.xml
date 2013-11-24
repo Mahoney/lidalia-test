@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>lidalia-test</artifactId>
-  <version>1.0.0-jdk6</version>
+  <version>1.0.0-jdk6-SNAPSHOT</version>
 
   <name>Lidalia Test</name>
   <description>A collection of useful common assertions &amp; matchers for unit testing.</description>
