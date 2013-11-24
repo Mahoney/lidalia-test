@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import uk.org.lidalia.lang.Task;
@@ -68,15 +69,18 @@ public class AssertTests {
 
     @Test public void atIndexCorrectExpectation() {
         final List<String> strings = asList("foo", "bar");
-        assertThat(strings, aListWhoseElementAtIndex(0, is("foo")));
-        assertThat(strings, aListWhoseElementAtIndex(1, is("bar")));
+        final Matcher<List<String>> isAListWhoseElementAtIndex0IsFoo = aListWhoseElementAtIndex(0, is("foo"));
+        assertThat(strings, isAListWhoseElementAtIndex0IsFoo);
+        final Matcher<List<String>> isAListWhoseElementAtIndex1IsBar = aListWhoseElementAtIndex(1, is("bar"));
+        assertThat(strings, isAListWhoseElementAtIndex1IsBar);
     }
 
     @Test public void atIndexWrongExpectation() {
         AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
             public void run() {
-                assertThat(asList("foo", "bar"), aListWhoseElementAtIndex(1, is("not bar")));
+                final Matcher<List<String>> isAListWhoseElementAtIndex1IsNotBar = aListWhoseElementAtIndex(1, is("not bar"));
+                assertThat(asList("foo", "bar"), isAListWhoseElementAtIndex1IsNotBar);
             }
         });
         assertThat(expected.getMessage(), is("\n" +
@@ -88,7 +92,8 @@ public class AssertTests {
         AssertionError expected = shouldThrow(AssertionError.class, new Runnable() {
             @Override
             public void run() {
-                assertThat(asList("foo", "bar"), aListWhoseElementAtIndex(2, is("something")));
+                final Matcher<List<String>> isAListWhoseElementAtIndex2IsSomething = aListWhoseElementAtIndex(2, is("something"));
+                assertThat(asList("foo", "bar"), isAListWhoseElementAtIndex2IsSomething);
             }
         });
         assertThat(expected.getMessage(), is("[foo, bar] has no element at index 2"));
