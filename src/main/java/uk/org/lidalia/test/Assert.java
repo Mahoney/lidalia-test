@@ -94,17 +94,15 @@ public final class Assert {
      * {@code assertThat(String.class, is(aClassWhoseSuperClass(is(Object.class))));}
      *
      * @param classMatcher the matcher that will be applied to the class's superclass
-     * @param <U> the type of the superclass of the class being matched
-     * @param <T> the type of the class being matched
      * @return a matcher that will assert something about the superclass of a class
      */
-    public static <U, T extends U> FeatureMatcher<Class<? extends T>, Class<? extends U>> aClassWhoseSuperClass(
-            final Matcher<? extends Class<? extends U>> classMatcher) {
-        return new FeatureMatcher<Class<? extends T>, Class<? extends U>>(
+    private static FeatureMatcher<Class<?>, Class<?>> aClassWhoseSuperClass(
+            final Matcher<? extends Class<?>> classMatcher) {
+        return new FeatureMatcher<Class<?>, Class<?>>(
                 classMatcher, "a Class whose super class", "'s super class") {
-            @Override
-            protected Class<? extends U> featureValueOf(final Class<? extends T> actual) {
-                return (Class<? extends U>) actual.getSuperclass();
+            @Override @SuppressWarnings("unchecked")
+            protected Class<?> featureValueOf(final Class<?> actual) {
+                return actual.getSuperclass();
             }
         };
     }
