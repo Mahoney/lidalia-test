@@ -73,8 +73,8 @@ public final class Assert {
         final FeatureMatcher<Class<?>, Class<?>> isAClassThatExtendsObjectDirectly = aClassWhoseSuperClass(isEqualToObjectClass);
         final Matcher<List<Constructor<?>>> aSingleElementCollection = Assert.aCollectionWhoseSize(is(1));
         final Matcher<List<Constructor<?>>> isASingleElementCollection = is(aSingleElementCollection);
-        final Matcher<List<Constructor<?>>> aListWhoseFirstElementIsAPrivateNoArgsConstructor = Assert.<List<Constructor<?>>, Constructor<?>>aListWhoseElementAtIndex(0, isAPrivateNoArgsConstructor);
-        final Matcher<List<Constructor<?>>> isAListWhoseFirstElementIsAPrivateNoArgsConstructor = is(aListWhoseFirstElementIsAPrivateNoArgsConstructor);
+        final Matcher<List<? extends Constructor<?>>> aListWhoseFirstElementIsAPrivateNoArgsConstructor = Assert.aListWhoseElementAtIndex(0, isAPrivateNoArgsConstructor);
+        final Matcher<List<? extends Constructor<?>>> isAListWhoseFirstElementIsAPrivateNoArgsConstructor = is(aListWhoseFirstElementIsAPrivateNoArgsConstructor);
 
         final CombinableMatcher<List<Constructor<?>>> both = CombinableMatcher.both(
                 isASingleElementCollection);
@@ -152,15 +152,14 @@ public final class Assert {
      *
      * @param index the index of the element in the list the matcher will be applied to
      * @param matcher the matcher that will be applied to the element
-     * @param <T> the type of the List
      * @param <E> the type of the elements in the List
      * @return a matcher that will assert something about the element at the given index of a collection
      */
-    public static <T extends List<? extends E>, E> Matcher<T> aListWhoseElementAtIndex(
+    public static <E> Matcher<List<? extends E>> aListWhoseElementAtIndex(
             final Integer index, final Matcher<E> matcher) {
-        return new FeatureMatcher<T, E>(matcher, "a List whose element at index " + index, "'s element at index " + index) {
+        return new FeatureMatcher<List<? extends E>, E>(matcher, "a List whose element at index " + index, "'s element at index " + index) {
             @Override
-            protected E featureValueOf(final T actual) {
+            protected E featureValueOf(final List<? extends E> actual) {
                 if (actual.size() > index) {
                     return actual.get(index);
                 } else {
