@@ -96,7 +96,7 @@ public final class Assert {
      * @param classMatcher the matcher that will be applied to the class's superclass
      * @return a matcher that will assert something about the superclass of a class
      */
-    private static FeatureMatcher<Class<?>, Class<?>> aClassWhoseSuperClass(
+    public static FeatureMatcher<Class<?>, Class<?>> aClassWhoseSuperClass(
             final Matcher<? extends Class<?>> classMatcher) {
         return new FeatureMatcher<Class<?>, Class<?>>(
                 classMatcher, "a Class whose super class", "'s super class") {
