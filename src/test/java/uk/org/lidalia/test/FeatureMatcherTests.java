@@ -3,7 +3,6 @@ package uk.org.lidalia.test;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import static java.lang.System.lineSeparator;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static uk.org.lidalia.test.Assert.aClassWhoseSuperClass;
@@ -44,5 +43,9 @@ public class FeatureMatcherTests {
                 return actual.getName();
             }
         };
+    }
+
+    private static String lineSeparator() {
+        return System.getProperty("line.separator");
     }
 }

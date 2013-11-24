@@ -16,10 +16,9 @@ import uk.org.lidalia.lang.Modifier;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
 import static uk.org.lidalia.lang.Exceptions.throwUnchecked;
-import static uk.org.lidalia.test.CombinableMatcher.both;
 
 /**
  * Utility Hamcrest matchers for unit test assertions.
@@ -45,15 +44,47 @@ public final class Assert {
      * @return a matcher that asserts that a class is not instantiable
      */
     public static Matcher<Class<?>> isNotInstantiable() {
-        return both(aClassWhoseSuperClass(is(equalTo(Object.class))))
-                .and(aClassWhoseSetOfConstructors(both(
-                        is(Assert.<List<Constructor<?>>>aCollectionWhoseSize(is(1))))
-                        .and(is(Assert.<List<Constructor<?>>, Constructor<?>>aListWhoseElementAtIndex(0, both(
-                                is(aConstructorWhoseParameterTypes(is(Assert.<List<Class<?>>>aCollectionWhoseSize(is(0))))))
-                                .and(isAMemberWithModifier(Modifier.PRIVATE))
-                                .and(aConstructorWhoseThrownException(both(
-                                        isA(UnsupportedOperationException.class))
-                                        .and(is(aThrowableWhoseMessage(is("Not instantiable")))))))))));
+        final Matcher isAThrowableWhoseMessageIs = is(aThrowableWhoseMessage(is("Not instantiable")));
+
+        final Matcher isAnUnsupportedOperationException = instanceOf(UnsupportedOperationException.class);
+
+        final CombinableMatcher bothIsAnUnsupportedOperationException = CombinableMatcher.both(
+                isAThrowableWhoseMessageIs);
+
+        final CombinableMatcher bothIsAnUnsupportedOperationExceptionAndIsAThrowableWhoseMessageIs =
+                bothIsAnUnsupportedOperationException
+                        .and(isAnUnsupportedOperationException);
+
+        final Matcher aConstructorWhoseThrownExceptionBothIsAnUnsupportedOperationExceptionAndIsAThrowableWhoseMessageIs
+                = aConstructorWhoseThrownException(bothIsAnUnsupportedOperationExceptionAndIsAThrowableWhoseMessageIs);
+
+        final Matcher aMemberWithModifierPrivate = isAMemberWithModifier(Modifier.PRIVATE);
+
+        final Matcher isACollectionWhoseSizeIs0 = is(Assert.<List<Class<?>>>aCollectionWhoseSize(is(0)));
+
+        final Matcher isAConstructorWhoseParameterTypesAreACollectionWhoseSizeIs0 = is(aConstructorWhoseParameterTypes(isACollectionWhoseSizeIs0));
+
+        final CombinableMatcher<Constructor<?>> isAPrivateNoArgsConstructor = CombinableMatcher.both(
+                isAConstructorWhoseParameterTypesAreACollectionWhoseSizeIs0)
+                .and(aMemberWithModifierPrivate)
+                .and(aConstructorWhoseThrownExceptionBothIsAnUnsupportedOperationExceptionAndIsAThrowableWhoseMessageIs);
+
+        final Matcher<Class<Object>> isEqualToObjectClass = is(equalTo(Object.class));
+        final FeatureMatcher<Class<?>, Class<?>> isAClassThatExtendsObjectDirectly = aClassWhoseSuperClass(isEqualToObjectClass);
+        final Matcher<List<Constructor<?>>> aSingleElementCollection = Assert.aCollectionWhoseSize(is(1));
+        final Matcher<List<Constructor<?>>> isASingleElementCollection = is(aSingleElementCollection);
+        final Matcher<List<Constructor<?>>> aListWhoseFirstElementIsAPrivateNoArgsConstructor = Assert.<List<Constructor<?>>, Constructor<?>>aListWhoseElementAtIndex(0, isAPrivateNoArgsConstructor);
+        final Matcher<List<Constructor<?>>> isAListWhoseFirstElementIsAPrivateNoArgsConstructor = is(aListWhoseFirstElementIsAPrivateNoArgsConstructor);
+
+        final CombinableMatcher<List<Constructor<?>>> both = CombinableMatcher.both(
+                isASingleElementCollection);
+        final CombinableMatcher<List<Constructor<?>>> isASinglePrivateNoArgsConstructor = both
+                .and(isAListWhoseFirstElementIsAPrivateNoArgsConstructor);
+        final FeatureMatcher<Class<?>, List<Constructor<?>>> isAClassWithASinglePrivateNoArgsConstructor = aClassWhoseSetOfConstructors(isASinglePrivateNoArgsConstructor);
+        final CombinableMatcher<Class<?>> both1 = CombinableMatcher.both(isAClassThatExtendsObjectDirectly);
+        final CombinableMatcher<Class<?>> and = both1.and(isAClassWithASinglePrivateNoArgsConstructor);
+
+        return (CombinableMatcher<Class<?>>) and;
     }
 
     /**
@@ -107,7 +138,7 @@ public final class Assert {
      * @return a matcher that will assert something about a collection's size
      */
     public static <T extends Collection<?>> Matcher<T> aCollectionWhoseSize(final Matcher<Integer> sizeMatcher) {
-        return new FeatureMatcher<T, Integer>(sizeMatcher, "a Collection whose size", "'s length") {
+        return new FeatureMatcher<T, Integer>(sizeMatcher, "a Collection whose size", "'s size") {
             @Override
             protected Integer featureValueOf(final T actual) {
                 return actual.size();
