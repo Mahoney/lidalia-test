@@ -15,11 +15,12 @@ public final class ShouldThrow {
      * Asserts that a code block throws a {@link Throwable} of the given type and returns it to permit further assertions on the
      * Throwable instance returned.
      *
+     * Throws any other Throwable thrown by the code block that is not an instance of the expected type in an unchecked way
+     *
      * @param expectedThrowableType the class of the throwable the code block should throw
      * @param workThatShouldThrowThrowable a code block that ought to throw the expected type when evaluated
      * @param <ThrowableType> the type of the throwable the code block should throw
      * @throws AssertionError if no Throwable is thrown at all whilst executing the code block
-     * @throws Throwable any other Throwable thrown by the code block that is not an instance of the expected type
      * @return the instance of the expected throwable type thrown by the code block, if it was thrown
      */
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
@@ -32,12 +33,13 @@ public final class ShouldThrow {
      * Asserts that a code block throws a {@link Throwable} of the given type and returns it to permit further assertions on the
      * Throwable instance returned.
      *
+     * Throws any other Throwable thrown by the code block that is not an instance of the expected type in an unchecked way
+     *
      * @param expectedThrowableType the class of the throwable the code block should throw
      * @param message the message to be used as the message of the AssertionError if no throwable is thrown at all
      * @param workThatShouldThrowThrowable a code block that ought to throw the expected type when evaluated
      * @param <ThrowableType> the type of the throwable the code block should throw
      * @throws AssertionError if no Throwable is thrown at all whilst executing the code block
-     * @throws Throwable any other Throwable thrown by the code block that is not an instance of the expected type
      * @return the instance of the expected throwable type thrown by the code block, if it was thrown
      */
     public static <ThrowableType extends Throwable> ThrowableType shouldThrow(
